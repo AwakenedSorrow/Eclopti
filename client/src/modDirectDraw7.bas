@@ -113,8 +113,6 @@ Public Function InitDX8() As Boolean
     
     Direct3D_Window.SwapEffect = D3DSWAPEFFECT_DISCARD 'Refresh when the monitor does.
     Direct3D_Window.BackBufferFormat = Display_Mode.Format 'Sets the format that was retrieved into the backbuffer.
-    'Creates the rendering device with some useful info, along with the info
-    'DispMode.Format = D3DFMT_X8R8G8B8
     Direct3D_Window.SwapEffect = D3DSWAPEFFECT_COPY
     Direct3D_Window.BackBufferCount = 1 '1 backbuffer only
     Direct3D_Window.BackBufferWidth = 800 ' frmMain.picScreen.ScaleWidth 'Match the backbuffer width with the display width
@@ -126,7 +124,7 @@ Public Function InitDX8() As Boolean
         MsgBox "Unable to initialize DirectX8. You may be missing dx8vb.dll or have incompatible hardware to use DirectX8."
         DestroyGame
     End If
-
+    
     With Direct3D_Device
         .SetVertexShader D3DFVF_XYZRHW Or D3DFVF_TEX1 Or D3DFVF_DIFFUSE
     
@@ -138,14 +136,14 @@ Public Function InitDX8() As Boolean
         .SetRenderState D3DRS_CULLMODE, D3DCULL_NONE
         .SetRenderState D3DRS_ZENABLE, False
         .SetRenderState D3DRS_ZWRITEENABLE, False
-        
-        .SetTextureStageState 0, D3DTSS_ALPHAOP, D3DTOP_MODULATE
-    
         .SetRenderState D3DRS_POINTSPRITE_ENABLE, 1
         .SetRenderState D3DRS_POINTSCALE_ENABLE, 0
-    
+        
+        .SetTextureStageState 0, D3DTSS_ALPHAOP, D3DTOP_MODULATE
         .SetTextureStageState 0, D3DTSS_MAGFILTER, D3DTEXF_POINT
         .SetTextureStageState 0, D3DTSS_MINFILTER, D3DTEXF_POINT
+        ' *** 04/09/2012 DD/MM/YYYY : Disabled MipMapping below. ***
+        .SetTextureStageState 0, D3DTSS_MIPFILTER, D3DTEXF_NONE
     End With
     
     ' Initialise the surfaces
