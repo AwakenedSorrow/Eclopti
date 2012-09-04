@@ -87,7 +87,7 @@ End Sub
 Sub SpawnItemSlot(ByVal MapItemSlot As Long, ByVal itemnum As Long, ByVal ItemVal As Long, ByVal mapnum As Long, ByVal x As Long, ByVal y As Long, Optional ByVal playerName As String = vbNullString, Optional ByVal canDespawn As Boolean = True)
     Dim packet As String
     Dim i As Long
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
     ' Check for subscript out of range
     If MapItemSlot <= 0 Or MapItemSlot > MAX_MAP_ITEMS Or itemnum < 0 Or itemnum > MAX_ITEMS Or mapnum <= 0 Or mapnum > MAX_MAPS Then
@@ -156,7 +156,7 @@ Function Random(ByVal Low As Long, ByVal High As Long) As Long
 End Function
 
 Public Sub SpawnNpc(ByVal mapNpcNum As Long, ByVal mapnum As Long, Optional ForcedSpawn As Boolean = False)
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
     Dim npcNum As Long
     Dim i As Long
     Dim x As Long
@@ -234,15 +234,15 @@ Public Sub SpawnNpc(ByVal mapNpcNum As Long, ByVal mapnum As Long, Optional Forc
 
         ' If we suceeded in spawning then send it to everyone
         If Spawned Then
-            Set Buffer = New clsBuffer
-            Buffer.WriteLong SSpawnNpc
-            Buffer.WriteLong mapNpcNum
-            Buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).Num
-            Buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).x
-            Buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).y
-            Buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).Dir
-            SendDataToMap mapnum, Buffer.ToArray()
-            Set Buffer = Nothing
+            Set buffer = New clsBuffer
+            buffer.WriteLong SSpawnNpc
+            buffer.WriteLong mapNpcNum
+            buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).Num
+            buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).x
+            buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).y
+            buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).Dir
+            SendDataToMap mapnum, buffer.ToArray()
+            Set buffer = Nothing
             UpdateMapBlock mapnum, MapNpc(mapnum).Npc(mapNpcNum).x, MapNpc(mapnum).Npc(mapNpcNum).y, True
         End If
         
@@ -252,18 +252,18 @@ Public Sub SpawnNpc(ByVal mapNpcNum As Long, ByVal mapnum As Long, Optional Forc
         MapNpc(mapnum).Npc(mapNpcNum).target = 0
         MapNpc(mapnum).Npc(mapNpcNum).targetType = 0 ' clear
         ' send death to the map
-        Set Buffer = New clsBuffer
-        Buffer.WriteLong SNpcDead
-        Buffer.WriteLong mapNpcNum
-        SendDataToMap mapnum, Buffer.ToArray()
-        Set Buffer = Nothing
+        Set buffer = New clsBuffer
+        buffer.WriteLong SNpcDead
+        buffer.WriteLong mapNpcNum
+        SendDataToMap mapnum, buffer.ToArray()
+        Set buffer = Nothing
     End If
 
 End Sub
 
 Public Sub SpawnMapEventsFor(index As Long, mapnum As Long)
 Dim i As Long, x As Long, y As Long, z As Long, spawncurrentevent As Boolean, p As Long
-Dim Buffer As clsBuffer
+Dim buffer As clsBuffer
     
     TempPlayer(index).EventMap.CurrentEvents = 0
     ReDim TempPlayer(index).EventMap.EventPages(0)
@@ -380,40 +380,39 @@ Dim Buffer As clsBuffer
                             .FixedDir = Map(mapnum).Events(i).Pages(z).DirFix
                             
                         End With
-                        GoTo nextevent
+                        Exit For
                     End If
                 End With
             Next
         End If
-nextevent:
     Next
     
     If TempPlayer(index).EventMap.CurrentEvents > 0 Then
         For i = 1 To TempPlayer(index).EventMap.CurrentEvents
-            Set Buffer = New clsBuffer
-            Buffer.WriteLong SSpawnEvent
-            Buffer.WriteLong i
+            Set buffer = New clsBuffer
+            buffer.WriteLong SSpawnEvent
+            buffer.WriteLong i
             With TempPlayer(index).EventMap.EventPages(i)
-                Buffer.WriteString Map(GetPlayerMap(index)).Events(i).Name
-                Buffer.WriteLong .Dir
-                Buffer.WriteLong .GraphicNum
-                Buffer.WriteLong .GraphicType
-                Buffer.WriteLong .GraphicX
-                Buffer.WriteLong .GraphicX2
-                Buffer.WriteLong .GraphicY
-                Buffer.WriteLong .GraphicY2
-                Buffer.WriteLong .movementspeed
-                Buffer.WriteLong .x
-                Buffer.WriteLong .y
-                Buffer.WriteLong .Position
-                Buffer.WriteLong .Visible
-                Buffer.WriteLong Map(mapnum).Events(.eventID).Pages(.pageID).WalkAnim
-                Buffer.WriteLong Map(mapnum).Events(.eventID).Pages(.pageID).DirFix
-                Buffer.WriteLong Map(mapnum).Events(.eventID).Pages(.pageID).WalkThrough
-                Buffer.WriteLong Map(mapnum).Events(.eventID).Pages(.pageID).ShowName
+                buffer.WriteString Map(GetPlayerMap(index)).Events(i).Name
+                buffer.WriteLong .Dir
+                buffer.WriteLong .GraphicNum
+                buffer.WriteLong .GraphicType
+                buffer.WriteLong .GraphicX
+                buffer.WriteLong .GraphicX2
+                buffer.WriteLong .GraphicY
+                buffer.WriteLong .GraphicY2
+                buffer.WriteLong .movementspeed
+                buffer.WriteLong .x
+                buffer.WriteLong .y
+                buffer.WriteLong .Position
+                buffer.WriteLong .Visible
+                buffer.WriteLong Map(mapnum).Events(.eventID).Pages(.pageID).WalkAnim
+                buffer.WriteLong Map(mapnum).Events(.eventID).Pages(.pageID).DirFix
+                buffer.WriteLong Map(mapnum).Events(.eventID).Pages(.pageID).WalkThrough
+                buffer.WriteLong Map(mapnum).Events(.eventID).Pages(.pageID).ShowName
             End With
-            SendDataTo index, Buffer.ToArray
-            Set Buffer = Nothing
+            SendDataTo index, buffer.ToArray
+            Set buffer = Nothing
         Next
     End If
 End Sub
@@ -736,7 +735,7 @@ End Function
 
 Sub NpcMove(ByVal mapnum As Long, ByVal mapNpcNum As Long, ByVal Dir As Long, ByVal movement As Long)
     Dim packet As String
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
     ' Check for subscript out of range
     If mapnum <= 0 Or mapnum > MAX_MAPS Or mapNpcNum <= 0 Or mapNpcNum > MAX_MAP_NPCS Or Dir < DIR_UP Or Dir > DIR_RIGHT Or movement < 1 Or movement > 2 Then
@@ -749,48 +748,48 @@ Sub NpcMove(ByVal mapnum As Long, ByVal mapNpcNum As Long, ByVal Dir As Long, By
     Select Case Dir
         Case DIR_UP
             MapNpc(mapnum).Npc(mapNpcNum).y = MapNpc(mapnum).Npc(mapNpcNum).y - 1
-            Set Buffer = New clsBuffer
-            Buffer.WriteLong SNpcMove
-            Buffer.WriteLong mapNpcNum
-            Buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).x
-            Buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).y
-            Buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).Dir
-            Buffer.WriteLong movement
-            SendDataToMap mapnum, Buffer.ToArray()
-            Set Buffer = Nothing
+            Set buffer = New clsBuffer
+            buffer.WriteLong SNpcMove
+            buffer.WriteLong mapNpcNum
+            buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).x
+            buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).y
+            buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).Dir
+            buffer.WriteLong movement
+            SendDataToMap mapnum, buffer.ToArray()
+            Set buffer = Nothing
         Case DIR_DOWN
             MapNpc(mapnum).Npc(mapNpcNum).y = MapNpc(mapnum).Npc(mapNpcNum).y + 1
-            Set Buffer = New clsBuffer
-            Buffer.WriteLong SNpcMove
-            Buffer.WriteLong mapNpcNum
-            Buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).x
-            Buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).y
-            Buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).Dir
-            Buffer.WriteLong movement
-            SendDataToMap mapnum, Buffer.ToArray()
-            Set Buffer = Nothing
+            Set buffer = New clsBuffer
+            buffer.WriteLong SNpcMove
+            buffer.WriteLong mapNpcNum
+            buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).x
+            buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).y
+            buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).Dir
+            buffer.WriteLong movement
+            SendDataToMap mapnum, buffer.ToArray()
+            Set buffer = Nothing
         Case DIR_LEFT
             MapNpc(mapnum).Npc(mapNpcNum).x = MapNpc(mapnum).Npc(mapNpcNum).x - 1
-            Set Buffer = New clsBuffer
-            Buffer.WriteLong SNpcMove
-            Buffer.WriteLong mapNpcNum
-            Buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).x
-            Buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).y
-            Buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).Dir
-            Buffer.WriteLong movement
-            SendDataToMap mapnum, Buffer.ToArray()
-            Set Buffer = Nothing
+            Set buffer = New clsBuffer
+            buffer.WriteLong SNpcMove
+            buffer.WriteLong mapNpcNum
+            buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).x
+            buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).y
+            buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).Dir
+            buffer.WriteLong movement
+            SendDataToMap mapnum, buffer.ToArray()
+            Set buffer = Nothing
         Case DIR_RIGHT
             MapNpc(mapnum).Npc(mapNpcNum).x = MapNpc(mapnum).Npc(mapNpcNum).x + 1
-            Set Buffer = New clsBuffer
-            Buffer.WriteLong SNpcMove
-            Buffer.WriteLong mapNpcNum
-            Buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).x
-            Buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).y
-            Buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).Dir
-            Buffer.WriteLong movement
-            SendDataToMap mapnum, Buffer.ToArray()
-            Set Buffer = Nothing
+            Set buffer = New clsBuffer
+            buffer.WriteLong SNpcMove
+            buffer.WriteLong mapNpcNum
+            buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).x
+            buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).y
+            buffer.WriteLong MapNpc(mapnum).Npc(mapNpcNum).Dir
+            buffer.WriteLong movement
+            SendDataToMap mapnum, buffer.ToArray()
+            Set buffer = Nothing
     End Select
     
     UpdateMapBlock mapnum, MapNpc(mapnum).Npc(mapNpcNum).x, MapNpc(mapnum).Npc(mapNpcNum).y, True
@@ -799,7 +798,7 @@ End Sub
 
 Sub NpcDir(ByVal mapnum As Long, ByVal mapNpcNum As Long, ByVal Dir As Long)
     Dim packet As String
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
     ' Check for subscript out of range
     If mapnum <= 0 Or mapnum > MAX_MAPS Or mapNpcNum <= 0 Or mapNpcNum > MAX_MAP_NPCS Or Dir < DIR_UP Or Dir > DIR_RIGHT Then
@@ -807,12 +806,12 @@ Sub NpcDir(ByVal mapnum As Long, ByVal mapNpcNum As Long, ByVal Dir As Long)
     End If
 
     MapNpc(mapnum).Npc(mapNpcNum).Dir = Dir
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong SNpcDir
-    Buffer.WriteLong mapNpcNum
-    Buffer.WriteLong Dir
-    SendDataToMap mapnum, Buffer.ToArray()
-    Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong SNpcDir
+    buffer.WriteLong mapNpcNum
+    buffer.WriteLong Dir
+    SendDataToMap mapnum, buffer.ToArray()
+    Set buffer = Nothing
 End Sub
 
 Function GetTotalMapPlayers(ByVal mapnum As Long) As Long
@@ -1569,7 +1568,7 @@ Function CanEventMove(index As Long, ByVal mapnum As Long, x As Long, y As Long,
 End Function
 
 Sub EventDir(playerindex As Long, ByVal mapnum As Long, ByVal eventID As Long, ByVal Dir As Long, Optional globalevent As Boolean = False)
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
     ' Check for subscript out of range
     If mapnum <= 0 Or mapnum > MAX_MAPS Or Dir < DIR_UP Or Dir > DIR_RIGHT Then
@@ -1582,21 +1581,21 @@ Sub EventDir(playerindex As Long, ByVal mapnum As Long, ByVal eventID As Long, B
         If Map(mapnum).Events(eventID).Pages(TempPlayer(playerindex).EventMap.EventPages(eventID).pageID).DirFix = 0 Then TempPlayer(playerindex).EventMap.EventPages(eventID).Dir = Dir
     End If
     
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong SEventDir
-    Buffer.WriteLong eventID
+    Set buffer = New clsBuffer
+    buffer.WriteLong SEventDir
+    buffer.WriteLong eventID
     If globalevent Then
-        Buffer.WriteLong TempEventMap(mapnum).Events(eventID).Dir
+        buffer.WriteLong TempEventMap(mapnum).Events(eventID).Dir
     Else
-        Buffer.WriteLong TempPlayer(playerindex).EventMap.EventPages(eventID).Dir
+        buffer.WriteLong TempPlayer(playerindex).EventMap.EventPages(eventID).Dir
     End If
-    SendDataToMap mapnum, Buffer.ToArray()
-    Set Buffer = Nothing
+    SendDataToMap mapnum, buffer.ToArray()
+    Set buffer = Nothing
 End Sub
 
 Sub EventMove(index As Long, mapnum As Long, ByVal eventID As Long, ByVal Dir As Long, movementspeed As Long, Optional globalevent As Boolean = False)
     Dim packet As String
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
     ' Check for subscript out of range
     If mapnum <= 0 Or mapnum > MAX_MAPS Or Dir < DIR_UP Or Dir > DIR_RIGHT Then
@@ -1615,142 +1614,142 @@ Sub EventMove(index As Long, mapnum As Long, ByVal eventID As Long, ByVal Dir As
             If globalevent Then
                 TempEventMap(mapnum).Events(eventID).y = TempEventMap(mapnum).Events(eventID).y - 1
                 UpdateMapBlock mapnum, TempEventMap(mapnum).Events(eventID).x, TempEventMap(mapnum).Events(eventID).y, True
-                Set Buffer = New clsBuffer
-                Buffer.WriteLong SEventMove
-                Buffer.WriteLong eventID
-                Buffer.WriteLong TempEventMap(mapnum).Events(eventID).x
-                Buffer.WriteLong TempEventMap(mapnum).Events(eventID).y
-                Buffer.WriteLong Dir
-                Buffer.WriteLong TempEventMap(mapnum).Events(eventID).Dir
-                Buffer.WriteLong movementspeed
+                Set buffer = New clsBuffer
+                buffer.WriteLong SEventMove
+                buffer.WriteLong eventID
+                buffer.WriteLong TempEventMap(mapnum).Events(eventID).x
+                buffer.WriteLong TempEventMap(mapnum).Events(eventID).y
+                buffer.WriteLong Dir
+                buffer.WriteLong TempEventMap(mapnum).Events(eventID).Dir
+                buffer.WriteLong movementspeed
                 If globalevent Then
-                    SendDataToMap mapnum, Buffer.ToArray()
+                    SendDataToMap mapnum, buffer.ToArray()
                 Else
-                    SendDataTo index, Buffer.ToArray
+                    SendDataTo index, buffer.ToArray
                 End If
-                Set Buffer = Nothing
+                Set buffer = Nothing
             Else
                 TempPlayer(index).EventMap.EventPages(eventID).y = TempPlayer(index).EventMap.EventPages(eventID).y - 1
-                Set Buffer = New clsBuffer
-                Buffer.WriteLong SEventMove
-                Buffer.WriteLong eventID
-                Buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).x
-                Buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).y
-                Buffer.WriteLong Dir
-                Buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).Dir
-                Buffer.WriteLong movementspeed
+                Set buffer = New clsBuffer
+                buffer.WriteLong SEventMove
+                buffer.WriteLong eventID
+                buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).x
+                buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).y
+                buffer.WriteLong Dir
+                buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).Dir
+                buffer.WriteLong movementspeed
                 If globalevent Then
-                    SendDataToMap mapnum, Buffer.ToArray()
+                    SendDataToMap mapnum, buffer.ToArray()
                 Else
-                    SendDataTo index, Buffer.ToArray
+                    SendDataTo index, buffer.ToArray
                 End If
-                Set Buffer = Nothing
+                Set buffer = Nothing
             End If
             
         Case DIR_DOWN
             If globalevent Then
                 TempEventMap(mapnum).Events(eventID).y = TempEventMap(mapnum).Events(eventID).y + 1
                 UpdateMapBlock mapnum, TempEventMap(mapnum).Events(eventID).x, TempEventMap(mapnum).Events(eventID).y, True
-                Set Buffer = New clsBuffer
-                Buffer.WriteLong SEventMove
-                Buffer.WriteLong eventID
-                Buffer.WriteLong TempEventMap(mapnum).Events(eventID).x
-                Buffer.WriteLong TempEventMap(mapnum).Events(eventID).y
-                Buffer.WriteLong Dir
-                Buffer.WriteLong TempEventMap(mapnum).Events(eventID).Dir
-                Buffer.WriteLong movementspeed
+                Set buffer = New clsBuffer
+                buffer.WriteLong SEventMove
+                buffer.WriteLong eventID
+                buffer.WriteLong TempEventMap(mapnum).Events(eventID).x
+                buffer.WriteLong TempEventMap(mapnum).Events(eventID).y
+                buffer.WriteLong Dir
+                buffer.WriteLong TempEventMap(mapnum).Events(eventID).Dir
+                buffer.WriteLong movementspeed
                 If globalevent Then
-                    SendDataToMap mapnum, Buffer.ToArray()
+                    SendDataToMap mapnum, buffer.ToArray()
                 Else
-                    SendDataTo index, Buffer.ToArray
+                    SendDataTo index, buffer.ToArray
                 End If
-                Set Buffer = Nothing
+                Set buffer = Nothing
             Else
                 TempPlayer(index).EventMap.EventPages(eventID).y = TempPlayer(index).EventMap.EventPages(eventID).y + 1
-                Set Buffer = New clsBuffer
-                Buffer.WriteLong SEventMove
-                Buffer.WriteLong eventID
-                Buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).x
-                Buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).y
-                Buffer.WriteLong Dir
-                Buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).Dir
-                Buffer.WriteLong movementspeed
+                Set buffer = New clsBuffer
+                buffer.WriteLong SEventMove
+                buffer.WriteLong eventID
+                buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).x
+                buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).y
+                buffer.WriteLong Dir
+                buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).Dir
+                buffer.WriteLong movementspeed
                 If globalevent Then
-                    SendDataToMap mapnum, Buffer.ToArray()
+                    SendDataToMap mapnum, buffer.ToArray()
                 Else
-                    SendDataTo index, Buffer.ToArray
+                    SendDataTo index, buffer.ToArray
                 End If
-                Set Buffer = Nothing
+                Set buffer = Nothing
             End If
         Case DIR_LEFT
             If globalevent Then
                 TempEventMap(mapnum).Events(eventID).x = TempEventMap(mapnum).Events(eventID).x - 1
                 UpdateMapBlock mapnum, TempEventMap(mapnum).Events(eventID).x, TempEventMap(mapnum).Events(eventID).y, True
-                Set Buffer = New clsBuffer
-                Buffer.WriteLong SEventMove
-                Buffer.WriteLong eventID
-                Buffer.WriteLong TempEventMap(mapnum).Events(eventID).x
-                Buffer.WriteLong TempEventMap(mapnum).Events(eventID).y
-                Buffer.WriteLong Dir
-                Buffer.WriteLong TempEventMap(mapnum).Events(eventID).Dir
-                Buffer.WriteLong movementspeed
+                Set buffer = New clsBuffer
+                buffer.WriteLong SEventMove
+                buffer.WriteLong eventID
+                buffer.WriteLong TempEventMap(mapnum).Events(eventID).x
+                buffer.WriteLong TempEventMap(mapnum).Events(eventID).y
+                buffer.WriteLong Dir
+                buffer.WriteLong TempEventMap(mapnum).Events(eventID).Dir
+                buffer.WriteLong movementspeed
                 If globalevent Then
-                    SendDataToMap mapnum, Buffer.ToArray()
+                    SendDataToMap mapnum, buffer.ToArray()
                 Else
-                    SendDataTo index, Buffer.ToArray
+                    SendDataTo index, buffer.ToArray
                 End If
-                Set Buffer = Nothing
+                Set buffer = Nothing
             Else
                 TempPlayer(index).EventMap.EventPages(eventID).x = TempPlayer(index).EventMap.EventPages(eventID).x - 1
-                Set Buffer = New clsBuffer
-                Buffer.WriteLong SEventMove
-                Buffer.WriteLong eventID
-                Buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).x
-                Buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).y
-                Buffer.WriteLong Dir
-                Buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).Dir
-                Buffer.WriteLong movementspeed
+                Set buffer = New clsBuffer
+                buffer.WriteLong SEventMove
+                buffer.WriteLong eventID
+                buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).x
+                buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).y
+                buffer.WriteLong Dir
+                buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).Dir
+                buffer.WriteLong movementspeed
                 If globalevent Then
-                    SendDataToMap mapnum, Buffer.ToArray()
+                    SendDataToMap mapnum, buffer.ToArray()
                 Else
-                    SendDataTo index, Buffer.ToArray
+                    SendDataTo index, buffer.ToArray
                 End If
-                Set Buffer = Nothing
+                Set buffer = Nothing
             End If
         Case DIR_RIGHT
             If globalevent Then
                 TempEventMap(mapnum).Events(eventID).x = TempEventMap(mapnum).Events(eventID).x + 1
                 UpdateMapBlock mapnum, TempEventMap(mapnum).Events(eventID).x, TempEventMap(mapnum).Events(eventID).y, True
-                Set Buffer = New clsBuffer
-                Buffer.WriteLong SEventMove
-                Buffer.WriteLong eventID
-                Buffer.WriteLong TempEventMap(mapnum).Events(eventID).x
-                Buffer.WriteLong TempEventMap(mapnum).Events(eventID).y
-                Buffer.WriteLong Dir
-                Buffer.WriteLong TempEventMap(mapnum).Events(eventID).Dir
-                Buffer.WriteLong movementspeed
+                Set buffer = New clsBuffer
+                buffer.WriteLong SEventMove
+                buffer.WriteLong eventID
+                buffer.WriteLong TempEventMap(mapnum).Events(eventID).x
+                buffer.WriteLong TempEventMap(mapnum).Events(eventID).y
+                buffer.WriteLong Dir
+                buffer.WriteLong TempEventMap(mapnum).Events(eventID).Dir
+                buffer.WriteLong movementspeed
                 If globalevent Then
-                    SendDataToMap mapnum, Buffer.ToArray()
+                    SendDataToMap mapnum, buffer.ToArray()
                 Else
-                    SendDataTo index, Buffer.ToArray
+                    SendDataTo index, buffer.ToArray
                 End If
-                Set Buffer = Nothing
+                Set buffer = Nothing
             Else
                 TempPlayer(index).EventMap.EventPages(eventID).x = TempPlayer(index).EventMap.EventPages(eventID).x + 1
-                Set Buffer = New clsBuffer
-                Buffer.WriteLong SEventMove
-                Buffer.WriteLong eventID
-                Buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).x
-                Buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).y
-                Buffer.WriteLong Dir
-                Buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).Dir
-                Buffer.WriteLong movementspeed
+                Set buffer = New clsBuffer
+                buffer.WriteLong SEventMove
+                buffer.WriteLong eventID
+                buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).x
+                buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).y
+                buffer.WriteLong Dir
+                buffer.WriteLong TempPlayer(index).EventMap.EventPages(eventID).Dir
+                buffer.WriteLong movementspeed
                 If globalevent Then
-                    SendDataToMap mapnum, Buffer.ToArray()
+                    SendDataToMap mapnum, buffer.ToArray()
                 Else
-                    SendDataTo index, Buffer.ToArray
+                    SendDataTo index, buffer.ToArray
                 End If
-                Set Buffer = Nothing
+                Set buffer = Nothing
             End If
     End Select
 

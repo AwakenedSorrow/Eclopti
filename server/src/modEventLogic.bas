@@ -1952,3 +1952,4 @@ Dim removeEventProcess As Boolean, tmpListLeftOff() As Long, restartlist As Bool
     CurList = tmpCurList
     CurSlot = tmpCurSlot
 End Function
+
