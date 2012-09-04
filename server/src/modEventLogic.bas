@@ -119,10 +119,10 @@ Dim buffer As clsBuffer, pageID As Long, id As Long, compare As Long, i As Long,
                 
                 'See if there is any reason to delete this event....
                 'In other words, go back through conditions and make sure they all check up.
-                For z = Map(mapnum).Events(id).PageCount To 1 Step -1
-                        
-                    spawnevent = True
-                        
+                spawnevent = True
+                z = Map(mapnum).Events(id).PageCount
+                Do While spawnevent = False
+                    
                     If Map(mapnum).Events(id).Pages(z).chkHasItem = 1 Then
                         If HasItem(i, Map(mapnum).Events(id).Pages(z).HasItemIndex) = 0 Then
                             spawnevent = False
@@ -194,7 +194,7 @@ Dim buffer As clsBuffer, pageID As Long, id As Long, compare As Long, i As Long,
                             End If
                         End If
                     End If
-                        
+                                
                     If spawnevent = True Then
                         With TempPlayer(i).EventMap.EventPages(x)
                             If Map(mapnum).Events(id).Pages(z).GraphicType = 1 Then
@@ -284,10 +284,11 @@ Dim buffer As clsBuffer, pageID As Long, id As Long, compare As Long, i As Long,
                         End With
                         SendDataTo i, buffer.ToArray
                         Set buffer = Nothing
-                        GoTo nextevent
                     End If
-                Next
-nextevent:
+                    
+                    z = z - 1
+                    If z < 1 Then spawnevent = True
+                Loop
             Next
         End If
     Next
