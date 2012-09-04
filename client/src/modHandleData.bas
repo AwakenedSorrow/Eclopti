@@ -595,7 +595,7 @@ Dim TNL As Long
     
     SetPlayerExp MyIndex, buffer.ReadLong
     TNL = buffer.ReadLong
-    frmMain.lblEXP.Caption = GetPlayerExp(Index) & "/" & TNL
+    frmMain.lblEXP.Caption = GetPlayerExp(MyIndex) & "/" & TNL
     ' mp bar
     frmMain.imgEXPBar.Width = ((GetPlayerExp(MyIndex) / EXPBar_Width) / (TNL / EXPBar_Width)) * EXPBar_Width
     
