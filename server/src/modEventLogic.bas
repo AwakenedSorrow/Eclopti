@@ -119,10 +119,9 @@ Dim buffer As clsBuffer, pageID As Long, id As Long, compare As Long, i As Long,
                 
                 'See if there is any reason to delete this event....
                 'In other words, go back through conditions and make sure they all check up.
-                spawnevent = True
-                z = Map(mapnum).Events(id).PageCount
-                Do While spawnevent = False
-                    
+                For z = Map(mapnum).Events(id).PageCount To 1 Step -1
+                    spawnevent = True
+             
                     If Map(mapnum).Events(id).Pages(z).chkHasItem = 1 Then
                         If HasItem(i, Map(mapnum).Events(id).Pages(z).HasItemIndex) = 0 Then
                             spawnevent = False
@@ -284,11 +283,10 @@ Dim buffer As clsBuffer, pageID As Long, id As Long, compare As Long, i As Long,
                         End With
                         SendDataTo i, buffer.ToArray
                         Set buffer = Nothing
+                        ' Exit the loop for this event since it's been spawned.
+                        Exit For
                     End If
-                    
-                    z = z - 1
-                    If z < 1 Then spawnevent = True
-                Loop
+                Next
             Next
         End If
     Next
