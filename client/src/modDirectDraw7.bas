@@ -61,7 +61,7 @@ Public Tex_Fade As DX8TextureRec
 Public NumTileSets As Long
 Public NumCharacters As Long
 Public NumPaperdolls As Long
-Public numitems As Long
+Public NumItems As Long
 Public NumResources As Long
 Public NumAnimations As Long
 Public NumSpellIcons As Long
@@ -333,7 +333,7 @@ Dim i As Long
         Tex_Tileset(i).Texture = 0
     Next
 
-    For i = 1 To numitems
+    For i = 1 To NumItems
         Tex_Item(i).Texture = 0
     Next
 
@@ -831,7 +831,7 @@ Dim MaxFrames As Byte
     ' get the picture
     PicNum = Item(MapItem(itemnum).num).Pic
 
-    If PicNum < 1 Or PicNum > numitems Then Exit Sub
+    If PicNum < 1 Or PicNum > NumItems Then Exit Sub
 
     If Tex_Item(PicNum).Width > 64 Then ' has more than 1 frame
         With rec
@@ -1262,7 +1262,7 @@ Dim sRect As RECT, dRect As RECT, i As Long, num As String, n As Long, destRect 
             Case 1 ' inventory
                 If Len(Item(Hotbar(i).Slot).name) > 0 Then
                     If Item(Hotbar(i).Slot).Pic > 0 Then
-                        If Item(Hotbar(i).Slot).Pic <= numitems Then
+                        If Item(Hotbar(i).Slot).Pic <= NumItems Then
                             Direct3D_Device.Clear 0, ByVal 0, D3DCLEAR_TARGET, D3DColorRGBA(0, 0, 0, 255), 1#, 0
                             Direct3D_Device.BeginScene
                             RenderTextureByRects Tex_Item(Item(Hotbar(i).Slot).Pic), sRect, dRect
@@ -1650,7 +1650,7 @@ Dim rec As RECT, rec_pos As RECT
         If MapItem(i).num > 0 Then
             itempic = Item(MapItem(i).num).Pic
 
-            If itempic < 1 Or itempic > numitems Then Exit Sub
+            If itempic < 1 Or itempic > NumItems Then Exit Sub
             MaxFrames = (Tex_Item(itempic).Width / 2) / 32 ' Work out how many frames there are. /2 because of inventory icons as well as ingame
 
             If MapItem(i).Frame < MaxFrames - 1 Then
@@ -1668,7 +1668,7 @@ Dim rec As RECT, rec_pos As RECT
         If itemnum > 0 And itemnum <= MAX_ITEMS Then
             itempic = Item(itemnum).Pic
 
-            If itempic > 0 And itempic <= numitems Then
+            If itempic > 0 And itempic <= NumItems Then
                 If Tex_Item(itempic).Width > 64 Then
                     MaxFrames = (Tex_Item(itempic).Width / 2) / 32 ' Work out how many frames there are. /2 because of inventory icons as well as ingame
 
@@ -1696,7 +1696,7 @@ Dim rec As RECT, rec_pos As RECT
                     RenderTextureByRects Tex_Item(itempic), rec, rec_pos
 
                     ' If item is a stack - draw the amount you have
-                    If GetPlayerInvItemValue(MyIndex, i) > 1 Then
+                    If GetPlayerInvItemValue(MyIndex, i) >= 1 Then
                         y = rec_pos.Top + 22
                         x = rec_pos.Left - 4
                         Amount = CStr(GetPlayerInvItemValue(MyIndex, i))
@@ -1777,7 +1777,7 @@ Dim rec As RECT, rec_pos As RECT, srcRect As D3DRECT, destRect As D3DRECT
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
-    If numitems = 0 Then Exit Sub
+    If NumItems = 0 Then Exit Sub
     
     'frmMain.picCharacter.Cls
     For i = 1 To Equipment.Equipment_Count - 1
@@ -1834,9 +1834,6 @@ Dim tmpItem As Long, amountModifier As Long
 
     If Not InGame Then Exit Sub
     
-    ' reset gold label
-    'frmMain.lblGold.Caption = "0g"
-    
     Direct3D_Device.Clear 0, ByVal 0, D3DCLEAR_TARGET, D3DColorRGBA(0, 0, 0, 0), 1#, 0
     Direct3D_Device.BeginScene
 
@@ -1869,7 +1866,7 @@ Dim tmpItem As Long, amountModifier As Long
                 Next
             End If
 
-            If itempic > 0 And itempic <= numitems Then
+            If itempic > 0 And itempic <= NumItems Then
                 If Tex_Item(itempic).Width <= 64 Then ' more than 1 frame is handled by anim sub
 
                     With rec
@@ -1889,7 +1886,7 @@ Dim tmpItem As Long, amountModifier As Long
                     RenderTextureByRects Tex_Item(itempic), rec, rec_pos
 
                     ' If item is a stack - draw the amount you have
-                    If GetPlayerInvItemValue(MyIndex, i) > 1 Then
+                    If GetPlayerInvItemValue(MyIndex, i) >= 1 Then
                         y = rec_pos.Top + 22
                         x = rec_pos.Left - 4
                         
@@ -1963,7 +1960,7 @@ Dim colour As Long
         If itemnum > 0 And itemnum <= MAX_ITEMS Then
             itempic = Item(itemnum).Pic
 
-            If itempic > 0 And itempic <= numitems Then
+            If itempic > 0 And itempic <= NumItems Then
                 With rec
                     .Top = 0
                     .Bottom = 32
@@ -2028,7 +2025,7 @@ Dim colour As Long
         If itemnum > 0 And itemnum <= MAX_ITEMS Then
             itempic = Item(itemnum).Pic
 
-            If itempic > 0 And itempic <= numitems Then
+            If itempic > 0 And itempic <= NumItems Then
                 With rec
                     .Top = 0
                     .Bottom = 32
@@ -2180,7 +2177,7 @@ Dim colour As Long
         itemnum = Shop(InShop).TradeItem(i).Item 'GetPlayerInvItemNum(MyIndex, i)
         If itemnum > 0 And itemnum <= MAX_ITEMS Then
             itempic = Item(itemnum).Pic
-            If itempic > 0 And itempic <= numitems Then
+            If itempic > 0 And itempic <= NumItems Then
             
                 With rec
                     .Top = 0
@@ -2691,7 +2688,7 @@ Dim dRect As RECT
 
     itemnum = Item(frmEditor_Map.scrlMapItem.value).Pic
 
-    If itemnum < 1 Or itemnum > numitems Then
+    If itemnum < 1 Or itemnum > NumItems Then
         frmEditor_Map.picMapItem.Cls
         Exit Sub
     End If
@@ -2735,7 +2732,7 @@ Dim dRect As RECT
 
     itemnum = Item(frmEditor_Map.scrlMapKey.value).Pic
 
-    If itemnum < 1 Or itemnum > numitems Then
+    If itemnum < 1 Or itemnum > NumItems Then
         frmEditor_Map.picMapKey.Cls
         Exit Sub
     End If
@@ -2782,7 +2779,7 @@ Dim dRect As RECT
 
     itemnum = frmEditor_Item.scrlPic.value
 
-    If itemnum < 1 Or itemnum > numitems Then
+    If itemnum < 1 Or itemnum > NumItems Then
         frmEditor_Item.picItem.Cls
         Exit Sub
     End If
@@ -3170,14 +3167,15 @@ Dim rec_pos As RECT, srcRect As D3DRECT
             Next
         
             ' Blit out the items
-            If numitems > 0 Then
-                For i = 1 To MAX_MAP_ITEMS
+            If NumItems > 0 Then
+                For i = MAX_MAP_ITEMS To 1 Step -1
                     If MapItem(i).num > 0 Then
                         Call DrawItem(i)
                     End If
                 Next
             End If
             
+            ' Blit out Events
             If Map.CurrentEvents > 0 Then
                 For i = 1 To Map.CurrentEvents
                     If Map.MapEvents(i).Position = 0 Then
@@ -3709,7 +3707,7 @@ Dim Sprite As Long, colour As Long
             
                 Sprite = Item(itemnum).Pic
                 
-                If Sprite <= 0 Or Sprite > numitems Then Exit Sub
+                If Sprite <= 0 Or Sprite > NumItems Then Exit Sub
             
                 With sRect
                     .Top = 0
