@@ -1,6 +1,6 @@
 VERSION 5.00
-Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCN.OCX"
-Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "Richtx32.ocx"
+Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "mswinsck.ocx"
+Object = "{3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0"; "richtx32.ocx"
 Begin VB.Form frmMain 
    BackColor       =   &H00E0E0E0&
    BorderStyle     =   1  'Fixed Single
@@ -1304,6 +1304,7 @@ Begin VB.Form frmMain
       _Version        =   393217
       BackColor       =   790032
       BorderStyle     =   0
+      Enabled         =   -1  'True
       ScrollBars      =   2
       Appearance      =   0
       TextRTF         =   $"frmMain.frx":3332
@@ -2483,31 +2484,53 @@ End Sub
 Private Sub lblCurrencyOk_Click()
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If IsNumeric(txtCurrency.text) Then
-        If Val(txtCurrency.text) > GetPlayerInvItemValue(MyIndex, tmpCurrencyItem) Then txtCurrency.text = GetPlayerInvItemValue(MyIndex, tmpCurrencyItem)
-        Select Case CurrencyMenu
-            Case 1 ' drop item
-                SendDropItem tmpCurrencyItem, Val(txtCurrency.text)
-            Case 2 ' deposit item
-                DepositItem tmpCurrencyItem, Val(txtCurrency.text)
-            Case 3 ' withdraw item
-                WithdrawItem tmpCurrencyItem, Val(txtCurrency.text)
-            Case 4 ' offer trade item
-                TradeItem tmpCurrencyItem, Val(txtCurrency.text)
+        
+    Select Case CurrencyMenu
+        Case 1 ' drop item
+            If Val(txtCurrency.text) > GetPlayerInvItemValue(MyIndex, tmpCurrencyItem) Then
+                txtCurrency.text = GetPlayerInvItemValue(MyIndex, tmpCurrencyItem)
+            Else
+                AddText "Please enter a valid amount.", BrightRed
+                Exit Sub
+            End If
+            SendDropItem tmpCurrencyItem, Val(txtCurrency.text)
+            
+        Case 2 ' deposit item
+            If Val(txtCurrency.text) > GetPlayerInvItemValue(MyIndex, tmpCurrencyItem) Then
+                txtCurrency.text = GetPlayerInvItemValue(MyIndex, tmpCurrencyItem)
+            Else
+                AddText "Please enter a valid amount.", BrightRed
+                Exit Sub
+            End If
+            DepositItem tmpCurrencyItem, Val(txtCurrency.text)
+        
+        Case 3 ' withdraw item
+            If Val(txtCurrency.text) > Bank.Item(tmpCurrencyItem).value Then
+                txtCurrency.text = Bank.Item(tmpCurrencyItem).value
+            Else
+                AddText "Please enter a valid amount.", BrightRed
+                Exit Sub
+            End If
+            WithdrawItem tmpCurrencyItem, Val(txtCurrency.text)
+            
+        Case 4 ' offer trade item
+            If Val(txtCurrency.text) > GetPlayerInvItemValue(MyIndex, tmpCurrencyItem) Then
+                txtCurrency.text = GetPlayerInvItemValue(MyIndex, tmpCurrencyItem)
+            Else
+                AddText "Please enter a valid amount.", BrightRed
+                Exit Sub
+            End If
+            TradeItem tmpCurrencyItem, Val(txtCurrency.text)
         End Select
-    Else
-        AddText "Please enter a valid amount.", BrightRed
-        Exit Sub
     End If
-    
     picCurrency.Visible = False
     tmpCurrencyItem = 0
     txtCurrency.text = vbNullString
     CurrencyMenu = 0 ' clear
-    
     ' Error handler
     Exit Sub
+
 errorhandler:
     HandleError "lblCurrencyOk_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
@@ -4246,7 +4269,7 @@ Dim bankNum As Long
 
     bankNum = IsBankItem(BankX, BankY)
     If bankNum <> 0 Then
-         If GetBankItemNum(bankNum) = ITEM_TYPE_NONE Then Exit Sub
+         If Item(GetBankItemNum(bankNum)).Type = ITEM_TYPE_NONE Then Exit Sub
          
              If Item(GetBankItemNum(bankNum)).Type = ITEM_TYPE_CURRENCY Then
                 CurrencyMenu = 3 ' withdraw
@@ -4357,6 +4380,7 @@ Dim x2 As Long, y2 As Long
             x2 = x + picBank.Left + 1
             y2 = y + picBank.Top + 1
             UpdateDescWindow Bank.Item(bankNum).num, x2, y2
+            LastItemDesc = Bank.Item(bankNum).num
             Exit Sub
         End If
     End If

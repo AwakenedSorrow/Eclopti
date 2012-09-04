@@ -35,7 +35,7 @@ Dim result As Boolean
 
     On Error GoTo errorhandler
     
-    If App.LogMode = 0 Then Exit Function
+    If App.LogMode = 0 Then GoTo errorhandler
     
     ' init music engine
     result = FSOUND_Init(44100, 32, FSOUND_INIT_USEDEFAULTMIDISYNTH)
