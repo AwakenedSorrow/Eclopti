@@ -1617,7 +1617,7 @@ Private Sub scrlMapItem_Change()
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
         
-    If Item(scrlMapItem.value).Type = ITEM_TYPE_CURRENCY Then
+    If Item(scrlMapItem.value).Type = ItemCurrency Then
         scrlMapItemValue.Enabled = True
     Else
         scrlMapItemValue.value = 1
@@ -1793,13 +1793,13 @@ Private Sub scrlNpcDir_Change()
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
     Select Case scrlNpcDir.value
-        Case DIR_DOWN
+        Case DirectionDown
             lblNpcDir = "Direction: Down"
-        Case DIR_UP
+        Case DirectionUp
             lblNpcDir = "Direction: Up"
-        Case DIR_LEFT
+        Case DirectionLeft
             lblNpcDir = "Direction: Left"
-        Case DIR_RIGHT
+        Case DirectionRight
             lblNpcDir = "Direction: Right"
     End Select
     

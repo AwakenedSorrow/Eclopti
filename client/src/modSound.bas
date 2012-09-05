@@ -259,7 +259,7 @@ If Options.sound = 0 Then Exit Sub
     End If
     For x = 0 To Map.MaxX
         For y = 0 To Map.MaxY
-            If Map.Tile(x, y).Type = TILE_TYPE_SOUND Then
+            If Map.Tile(x, y).Type = TileSound Then
                 MapSoundCount = MapSoundCount + 1
                 ReDim Preserve MapSounds(MapSoundCount)
                 MapSounds(MapSoundCount).SoundHandle = LoadSound(Trim$(Map.Tile(x, y).Data4), True)

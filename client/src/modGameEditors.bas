@@ -254,10 +254,10 @@ Dim tmpDir As Byte
         ElseIf frmEditor_Map.optAttribs.value Then
             With Map.Tile(CurX, CurY)
                 ' blocked tile
-                If frmEditor_Map.optBlocked.value Then .Type = TILE_TYPE_BLOCKED
+                If frmEditor_Map.optBlocked.value Then .Type = TileBlocked
                 ' warp tile
                 If frmEditor_Map.optWarp.value Then
-                    .Type = TILE_TYPE_WARP
+                    .Type = TileWarp
                     .Data1 = EditorWarpMap
                     .Data2 = EditorWarpX
                     .Data3 = EditorWarpY
@@ -265,7 +265,7 @@ Dim tmpDir As Byte
                 End If
                 ' item spawn
                 If frmEditor_Map.optItem.value Then
-                    .Type = TILE_TYPE_ITEM
+                    .Type = TileItem
                     .Data1 = ItemEditorNum
                     .Data2 = ItemEditorValue
                     .Data3 = 0
@@ -273,7 +273,7 @@ Dim tmpDir As Byte
                 End If
                 ' npc avoid
                 If frmEditor_Map.optNpcAvoid.value Then
-                    .Type = TILE_TYPE_NPCAVOID
+                    .Type = TileNPCAvoid
                     .Data1 = 0
                     .Data2 = 0
                     .Data3 = 0
@@ -281,7 +281,7 @@ Dim tmpDir As Byte
                 End If
                 ' key
                 If frmEditor_Map.optKey.value Then
-                    .Type = TILE_TYPE_KEY
+                    .Type = TileKey
                     .Data1 = KeyEditorNum
                     .Data2 = KeyEditorTake
                     .Data3 = 0
@@ -289,7 +289,7 @@ Dim tmpDir As Byte
                 End If
                 ' key open
                 If frmEditor_Map.optKeyOpen.value Then
-                    .Type = TILE_TYPE_KEYOPEN
+                    .Type = TileKeyOPEN
                     .Data1 = KeyOpenEditorX
                     .Data2 = KeyOpenEditorY
                     .Data3 = 0
@@ -297,7 +297,7 @@ Dim tmpDir As Byte
                 End If
                 ' resource
                 If frmEditor_Map.optResource.value Then
-                    .Type = TILE_TYPE_RESOURCE
+                    .Type = TileResource
                     .Data1 = ResourceEditorNum
                     .Data2 = 0
                     .Data3 = 0
@@ -305,7 +305,7 @@ Dim tmpDir As Byte
                 End If
                 ' door
                 If frmEditor_Map.optDoor.value Then
-                    .Type = TILE_TYPE_DOOR
+                    .Type = TileDoor
                     .Data1 = EditorWarpMap
                     .Data2 = EditorWarpX
                     .Data3 = EditorWarpY
@@ -313,7 +313,7 @@ Dim tmpDir As Byte
                 End If
                 ' npc spawn
                 If frmEditor_Map.optNpcSpawn.value Then
-                    .Type = TILE_TYPE_NPCSPAWN
+                    .Type = TileNPCSpawn
                     .Data1 = SpawnNpcNum
                     .Data2 = SpawnNpcDir
                     .Data3 = 0
@@ -321,7 +321,7 @@ Dim tmpDir As Byte
                 End If
                 ' shop
                 If frmEditor_Map.optShop.value Then
-                    .Type = TILE_TYPE_SHOP
+                    .Type = TileShop
                     .Data1 = EditorShop
                     .Data2 = 0
                     .Data3 = 0
@@ -329,7 +329,7 @@ Dim tmpDir As Byte
                 End If
                 ' bank
                 If frmEditor_Map.optBank.value Then
-                    .Type = TILE_TYPE_BANK
+                    .Type = TileBank
                     .Data1 = 0
                     .Data2 = 0
                     .Data3 = 0
@@ -337,7 +337,7 @@ Dim tmpDir As Byte
                 End If
                 ' heal
                 If frmEditor_Map.optHeal.value Then
-                    .Type = TILE_TYPE_HEAL
+                    .Type = TileHeal
                     .Data1 = MapEditorHealType
                     .Data2 = MapEditorHealAmount
                     .Data3 = 0
@@ -345,7 +345,7 @@ Dim tmpDir As Byte
                 End If
                 ' trap
                 If frmEditor_Map.optTrap.value Then
-                    .Type = TILE_TYPE_TRAP
+                    .Type = TileTrap
                     .Data1 = MapEditorHealAmount
                     .Data2 = 0
                     .Data3 = 0
@@ -353,7 +353,7 @@ Dim tmpDir As Byte
                 End If
                 ' slide
                 If frmEditor_Map.optSlide.value Then
-                    .Type = TILE_TYPE_SLIDE
+                    .Type = TileSlide
                     .Data1 = MapEditorSlideDir
                     .Data2 = 0
                     .Data3 = 0
@@ -361,7 +361,7 @@ Dim tmpDir As Byte
                 End If
                 ' sound
                 If frmEditor_Map.optSound.value Then
-                    .Type = TILE_TYPE_SOUND
+                    .Type = TileSound
                     .Data1 = 0
                     .Data2 = 0
                     .Data3 = 0
@@ -714,7 +714,7 @@ Dim SoundSet As Boolean
         End If
 
         ' Type specific settings
-        If (frmEditor_Item.cmbType.ListIndex >= ITEM_TYPE_WEAPON) And (frmEditor_Item.cmbType.ListIndex <= ITEM_TYPE_SHIELD) Then
+        If (frmEditor_Item.cmbType.ListIndex >= ItemWeapon) And (frmEditor_Item.cmbType.ListIndex <= ItemShield) Then
             frmEditor_Item.fraEquipment.Visible = True
             frmEditor_Item.scrlDamage.value = .Data2
             frmEditor_Item.cmbTool.ListIndex = .Data3
@@ -732,7 +732,7 @@ Dim SoundSet As Boolean
             frmEditor_Item.fraEquipment.Visible = False
         End If
 
-        If frmEditor_Item.cmbType.ListIndex = ITEM_TYPE_CONSUME Then
+        If frmEditor_Item.cmbType.ListIndex = ItemConsume Then
             frmEditor_Item.fraVitals.Visible = True
             frmEditor_Item.scrlAddHp.value = .AddHP
             frmEditor_Item.scrlAddMP.value = .AddMP
@@ -743,7 +743,7 @@ Dim SoundSet As Boolean
             frmEditor_Item.fraVitals.Visible = False
         End If
 
-        If (frmEditor_Item.cmbType.ListIndex = ITEM_TYPE_SPELL) Then
+        If (frmEditor_Item.cmbType.ListIndex = ItemSpell) Then
             frmEditor_Item.fraSpell.Visible = True
             frmEditor_Item.scrlSpell.value = .Data1
         Else
@@ -2078,13 +2078,13 @@ newlist:
                                 frmEditor_Events.lstCommands.AddItem indent & "@>" & "Warp Player To Map: " & tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data1 & " Tile(" & tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data2 & "," & tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data3 & ") while retaining direction."
                             Else
                                 Select Case tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data4 - 1
-                                    Case DIR_UP
+                                    Case DirectionUp
                                         frmEditor_Events.lstCommands.AddItem indent & "@>" & "Warp Player To Map: " & tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data1 & " Tile(" & tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data2 & "," & tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data3 & ") facing upward."
-                                    Case DIR_DOWN
+                                    Case DirectionDown
                                         frmEditor_Events.lstCommands.AddItem indent & "@>" & "Warp Player To Map: " & tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data1 & " Tile(" & tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data2 & "," & tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data3 & ") facing downward."
-                                    Case DIR_LEFT
+                                    Case DirectionLeft
                                         frmEditor_Events.lstCommands.AddItem indent & "@>" & "Warp Player To Map: " & tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data1 & " Tile(" & tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data2 & "," & tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data3 & ") facing left."
-                                    Case DIR_RIGHT
+                                    Case DirectionRight
                                         frmEditor_Events.lstCommands.AddItem indent & "@>" & "Warp Player To Map: " & tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data1 & " Tile(" & tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data2 & "," & tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data3 & ") facing right."
                                 End Select
                             End If
@@ -2122,15 +2122,15 @@ newlist:
                             frmEditor_Events.lstCommands.AddItem indent & "@>" & "Give Player " & tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data1 & " Experience."
                         Case EventType.evShowChatBubble
                             Select Case tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data1
-                                Case TARGET_TYPE_PLAYER
+                                Case TargetPlayer
                                     frmEditor_Events.lstCommands.AddItem indent & "@>" & "Show Chat Bubble - " & Mid(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Text1, 1, 20) & "... - On Player"
-                                Case TARGET_TYPE_NPC
+                                Case TargetNPC
                                     If Map.Npc(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data2) <= 0 Then
                                         frmEditor_Events.lstCommands.AddItem indent & "@>" & "Show Chat Bubble - " & Mid(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Text1, 1, 20) & "... - On NPC [" & CStr(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data2) & ". ]"
                                     Else
                                         frmEditor_Events.lstCommands.AddItem indent & "@>" & "Show Chat Bubble - " & Mid(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Text1, 1, 20) & "... - On NPC [" & CStr(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data2) & ". " & Trim$(Npc(Map.Npc(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data2)).name) & "]"
                                     End If
-                                Case TARGET_TYPE_EVENT
+                                Case TargetEvent
                                     frmEditor_Events.lstCommands.AddItem indent & "@>" & "Show Chat Bubble - " & Mid(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Text1, 1, 20) & "... - On Event [" & CStr(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data2) & ". " & Trim$(Map.Events(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data2).name) & "]"
                             End Select
                         Case EventType.evLabel
@@ -2153,15 +2153,15 @@ newlist:
                             frmEditor_Events.lstCommands.AddItem indent & "@>" & "Set Fog [Fog: " & CStr(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data1) & " Speed: " & CStr(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data2) & " Opacity: " & CStr(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data3) & "]"
                         Case EventType.evSetWeather
                             Select Case tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data1
-                                Case WEATHER_TYPE_NONE
+                                Case WeatherNone
                                     frmEditor_Events.lstCommands.AddItem indent & "@>" & "Set Weather [None]"
-                                Case WEATHER_TYPE_RAIN
+                                Case WeatherRain
                                     frmEditor_Events.lstCommands.AddItem indent & "@>" & "Set Weather [Rain - Intensity: " & CStr(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data2) & "]"
-                                Case WEATHER_TYPE_SNOW
+                                Case WeatherSnow
                                     frmEditor_Events.lstCommands.AddItem indent & "@>" & "Set Weather [Snow - Intensity: " & CStr(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data2) & "]"
-                                Case WEATHER_TYPE_SANDSTORM
+                                Case WeatherSandStorm
                                     frmEditor_Events.lstCommands.AddItem indent & "@>" & "Set Weather [Sand Storm - Intensity: " & CStr(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data2) & "]"
-                                Case WEATHER_TYPE_STORM
+                                Case WeatherStorm
                                     frmEditor_Events.lstCommands.AddItem indent & "@>" & "Set Weather [Storm - Intensity: " & CStr(tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(i).Data2) & "]"
                             End Select
                         Case EventType.evSetTint
@@ -2453,12 +2453,12 @@ Sub AddCommand(Index As Long)
             tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Index = Index
             tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Text1 = frmEditor_Events.txtChatbubbleText.text
             If frmEditor_Events.optChatBubbleTarget(0).value = True Then
-                tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Data1 = TARGET_TYPE_PLAYER
+                tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Data1 = TargetPlayer
             ElseIf frmEditor_Events.optChatBubbleTarget(1).value = True Then
-                tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Data1 = TARGET_TYPE_NPC
+                tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Data1 = TargetNPC
                 tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Data2 = frmEditor_Events.cmbChatBubbleTarget.ListIndex + 1
             ElseIf frmEditor_Events.optChatBubbleTarget(2).value = True Then
-                tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Data1 = TARGET_TYPE_EVENT
+                tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Data1 = TargetEvent
                 tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Data2 = frmEditor_Events.cmbChatBubbleTarget.ListIndex + 1
             End If
         Case EventType.evLabel
@@ -2896,11 +2896,11 @@ Public Sub EditEventCommand()
             isEdit = True
             frmEditor_Events.txtChatbubbleText.text = tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Text1
             Select Case tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Data1
-                Case TARGET_TYPE_PLAYER
+                Case TargetPlayer
                     frmEditor_Events.optChatBubbleTarget(0).value = True
-                Case TARGET_TYPE_NPC
+                Case TargetNPC
                     frmEditor_Events.optChatBubbleTarget(1).value = True
-                Case TARGET_TYPE_EVENT
+                Case TargetEvent
                     frmEditor_Events.optChatBubbleTarget(1).value = True
             End Select
             frmEditor_Events.fraDialogue.Visible = True
@@ -3177,12 +3177,12 @@ Public Sub EditCommand()
         Case EventType.evShowChatBubble
             tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Text1 = frmEditor_Events.txtChatbubbleText.text
             If frmEditor_Events.optChatBubbleTarget(0).value = True Then
-                tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Data1 = TARGET_TYPE_PLAYER
+                tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Data1 = TargetPlayer
             ElseIf frmEditor_Events.optChatBubbleTarget(1).value = True Then
-                tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Data1 = TARGET_TYPE_NPC
+                tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Data1 = TargetNPC
                 tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Data2 = frmEditor_Events.cmbChatBubbleTarget.ListIndex + 1
             ElseIf frmEditor_Events.optChatBubbleTarget(2).value = True Then
-                tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Data1 = TARGET_TYPE_EVENT
+                tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Data1 = TargetEvent
                 tmpEvent.Pages(curPageNum).CommandList(curlist).Commands(curslot).Data2 = frmEditor_Events.cmbChatBubbleTarget.ListIndex + 1
             End If
         Case EventType.evLabel

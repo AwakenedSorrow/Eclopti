@@ -717,13 +717,13 @@ Dim sDir As String
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     Select Case scrlDir.value
-        Case DIR_UP
+        Case DirectionUp
             sDir = "Up"
-        Case DIR_DOWN
+        Case DirectionDown
             sDir = "Down"
-        Case DIR_RIGHT
+        Case DirectionRight
             sDir = "Right"
-        Case DIR_LEFT
+        Case DirectionLeft
             sDir = "Left"
     End Select
     lblDir.Caption = "Dir: " & sDir

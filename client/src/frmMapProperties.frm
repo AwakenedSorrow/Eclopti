@@ -558,15 +558,15 @@ Private Sub cmdOk_Click()
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
-    If Not IsNumeric(txtMaxX.Text) Then txtMaxX.Text = Map.MaxX
-    If Val(txtMaxX.Text) < MAX_MAPX Then txtMaxX.Text = MAX_MAPX
-    If Val(txtMaxX.Text) > MAX_BYTE Then txtMaxX.Text = MAX_BYTE
-    If Not IsNumeric(txtMaxY.Text) Then txtMaxY.Text = Map.MaxY
-    If Val(txtMaxY.Text) < MAX_MAPY Then txtMaxY.Text = MAX_MAPY
-    If Val(txtMaxY.Text) > MAX_BYTE Then txtMaxY.Text = MAX_BYTE
+    If Not IsNumeric(txtMaxX.text) Then txtMaxX.text = Map.MaxX
+    If Val(txtMaxX.text) < MAX_MAPX Then txtMaxX.text = MAX_MAPX
+    If Val(txtMaxX.text) > MAX_BYTE Then txtMaxX.text = MAX_BYTE
+    If Not IsNumeric(txtMaxY.text) Then txtMaxY.text = Map.MaxY
+    If Val(txtMaxY.text) < MAX_MAPY Then txtMaxY.text = MAX_MAPY
+    If Val(txtMaxY.text) > MAX_BYTE Then txtMaxY.text = MAX_BYTE
 
     With Map
-        .name = Trim$(txtName.Text)
+        .name = Trim$(txtName.text)
         If lstMusic.ListIndex >= 0 Then
             .Music = lstMusic.List(lstMusic.ListIndex)
         Else
@@ -577,14 +577,14 @@ Private Sub cmdOk_Click()
         Else
             .BGS = vbNullString
         End If
-        .Up = Val(txtUp.Text)
-        .Down = Val(txtDown.Text)
-        .Left = Val(txtLeft.Text)
-        .Right = Val(txtRight.Text)
+        .Up = Val(txtUp.text)
+        .Down = Val(txtDown.text)
+        .Left = Val(txtLeft.text)
+        .Right = Val(txtRight.text)
         .Moral = cmbMoral.ListIndex
-        .BootMap = Val(txtBootMap.Text)
-        .BootX = Val(txtBootX.Text)
-        .BootY = Val(txtBootY.Text)
+        .BootMap = Val(txtBootMap.text)
+        .BootX = Val(txtBootX.text)
+        .BootY = Val(txtBootY.text)
         
         .Weather = CmbWeather.ListIndex
         .WeatherIntensity = scrlWeatherIntensity.value
@@ -603,8 +603,8 @@ Private Sub cmdOk_Click()
         x2 = Map.MaxX
         y2 = Map.MaxY
         ' change the data
-        .MaxX = Val(txtMaxX.Text)
-        .MaxY = Val(txtMaxY.Text)
+        .MaxX = Val(txtMaxX.text)
+        .MaxY = Val(txtMaxY.text)
         ReDim Map.Tile(0 To .MaxX, 0 To .MaxY)
 
         If x2 > .MaxX Then x2 = .MaxX

@@ -136,10 +136,10 @@ Sub SpawnMapItems(ByVal mapnum As Long)
         For y = 0 To Map(mapnum).MaxY
 
             ' Check if the tile type is an item or a saved tile incase someone drops something
-            If (Map(mapnum).Tile(x, y).Type = TILE_TYPE_ITEM) Then
+            If (Map(mapnum).Tile(x, y).Type = TileItem) Then
 
                 ' Check to see if its a currency and if they set the value to 0 set it to 1 automatically
-                If Item(Map(mapnum).Tile(x, y).Data1).Type = ITEM_TYPE_CURRENCY And Map(mapnum).Tile(x, y).Data2 <= 0 Then
+                If Item(Map(mapnum).Tile(x, y).Data1).Type = ItemCurrency And Map(mapnum).Tile(x, y).Data2 <= 0 Then
                     Call SpawnItem(Map(mapnum).Tile(x, y).Data1, 1, mapnum, x, y)
                 Else
                     Call SpawnItem(Map(mapnum).Tile(x, y).Data1, Map(mapnum).Tile(x, y).Data2, mapnum, x, y)
@@ -181,7 +181,7 @@ Public Sub SpawnNpc(ByVal mapNpcNum As Long, ByVal mapnum As Long, Optional Forc
         'Check if theres a spawn tile for the specific npc
         For x = 0 To Map(mapnum).MaxX
             For y = 0 To Map(mapnum).MaxY
-                If Map(mapnum).Tile(x, y).Type = TILE_TYPE_NPCSPAWN Then
+                If Map(mapnum).Tile(x, y).Type = TileNPCSpawn Then
                     If Map(mapnum).Tile(x, y).Data1 = mapNpcNum Then
                         MapNpc(mapnum).Npc(mapNpcNum).x = x
                         MapNpc(mapnum).Npc(mapNpcNum).y = y
@@ -307,13 +307,13 @@ Dim buffer As clsBuffer
                             If Map(mapnum).Events(i).Pages(z).GraphicType = 1 Then
                                 Select Case Map(mapnum).Events(i).Pages(z).GraphicY
                                     Case 0
-                                        .Dir = DIR_DOWN
+                                        .Dir = DirectionDown
                                     Case 1
-                                        .Dir = DIR_LEFT
+                                        .Dir = DirectionLeft
                                     Case 2
-                                        .Dir = DIR_RIGHT
+                                        .Dir = DirectionRight
                                     Case 3
-                                        .Dir = DIR_UP
+                                        .Dir = DirectionUp
                                 End Select
                             Else
                                 .Dir = 0
@@ -462,9 +462,9 @@ Public Function NpcTileIsOpen(ByVal mapnum As Long, ByVal x As Long, ByVal y As 
         End If
     Next
 
-    If Map(mapnum).Tile(x, y).Type <> TILE_TYPE_WALKABLE Then
-        If Map(mapnum).Tile(x, y).Type <> TILE_TYPE_NPCSPAWN Then
-            If Map(mapnum).Tile(x, y).Type <> TILE_TYPE_ITEM Then
+    If Map(mapnum).Tile(x, y).Type <> TileWalkable Then
+        If Map(mapnum).Tile(x, y).Type <> TileNPCSpawn Then
+            If Map(mapnum).Tile(x, y).Type <> TileItem Then
                 NpcTileIsOpen = False
             End If
         End If
@@ -516,16 +516,16 @@ Sub SpawnGlobalEvents(ByVal mapnum As Long)
                     If Map(mapnum).Events(i).Pages(1).GraphicType = 1 Then
                         Select Case Map(mapnum).Events(i).Pages(1).GraphicY
                             Case 0
-                                TempEventMap(mapnum).Events(TempEventMap(mapnum).EventCount).Dir = DIR_DOWN
+                                TempEventMap(mapnum).Events(TempEventMap(mapnum).EventCount).Dir = DirectionDown
                             Case 1
-                                TempEventMap(mapnum).Events(TempEventMap(mapnum).EventCount).Dir = DIR_LEFT
+                                TempEventMap(mapnum).Events(TempEventMap(mapnum).EventCount).Dir = DirectionLeft
                             Case 2
-                                TempEventMap(mapnum).Events(TempEventMap(mapnum).EventCount).Dir = DIR_RIGHT
+                                TempEventMap(mapnum).Events(TempEventMap(mapnum).EventCount).Dir = DirectionRight
                             Case 3
-                                TempEventMap(mapnum).Events(TempEventMap(mapnum).EventCount).Dir = DIR_UP
+                                TempEventMap(mapnum).Events(TempEventMap(mapnum).EventCount).Dir = DirectionUp
                         End Select
                     Else
-                        TempEventMap(mapnum).Events(TempEventMap(mapnum).EventCount).Dir = DIR_DOWN
+                        TempEventMap(mapnum).Events(TempEventMap(mapnum).EventCount).Dir = DirectionDown
                     End If
                     TempEventMap(mapnum).Events(TempEventMap(mapnum).EventCount).active = 1
                     
@@ -564,7 +564,7 @@ Function CanNpcMove(ByVal mapnum As Long, ByVal mapNpcNum As Long, ByVal Dir As 
     Dim y As Long
 
     ' Check for subscript out of range
-    If mapnum <= 0 Or mapnum > MAX_MAPS Or mapNpcNum <= 0 Or mapNpcNum > MAX_MAP_NPCS Or Dir < DIR_UP Or Dir > DIR_RIGHT Then
+    If mapnum <= 0 Or mapnum > MAX_MAPS Or mapNpcNum <= 0 Or mapNpcNum > MAX_MAP_NPCS Or Dir < DirectionUp Or Dir > DirectionRight Then
         Exit Function
     End If
 
@@ -573,14 +573,14 @@ Function CanNpcMove(ByVal mapnum As Long, ByVal mapNpcNum As Long, ByVal Dir As 
     CanNpcMove = True
 
     Select Case Dir
-        Case DIR_UP
+        Case DirectionUp
 
             ' Check to make sure not outside of boundries
             If y > 0 Then
                 n = Map(mapnum).Tile(x, y - 1).Type
 
                 ' Check to make sure that the tile is walkable
-                If n <> TILE_TYPE_WALKABLE And n <> TILE_TYPE_ITEM And n <> TILE_TYPE_NPCSPAWN Then
+                If n <> TileWalkable And n <> TileItem And n <> TileNPCSpawn Then
                     CanNpcMove = False
                     Exit Function
                 End If
@@ -604,7 +604,7 @@ Function CanNpcMove(ByVal mapnum As Long, ByVal mapNpcNum As Long, ByVal Dir As 
                 Next
                 
                 ' Directional blocking
-                If isDirBlocked(Map(mapnum).Tile(MapNpc(mapnum).Npc(mapNpcNum).x, MapNpc(mapnum).Npc(mapNpcNum).y).DirBlock, DIR_UP + 1) Then
+                If isDirBlocked(Map(mapnum).Tile(MapNpc(mapnum).Npc(mapNpcNum).x, MapNpc(mapnum).Npc(mapNpcNum).y).DirBlock, DirectionUp + 1) Then
                     CanNpcMove = False
                     Exit Function
                 End If
@@ -612,14 +612,14 @@ Function CanNpcMove(ByVal mapnum As Long, ByVal mapNpcNum As Long, ByVal Dir As 
                 CanNpcMove = False
             End If
 
-        Case DIR_DOWN
+        Case DirectionDown
 
             ' Check to make sure not outside of boundries
             If y < Map(mapnum).MaxY Then
                 n = Map(mapnum).Tile(x, y + 1).Type
 
                 ' Check to make sure that the tile is walkable
-                If n <> TILE_TYPE_WALKABLE And n <> TILE_TYPE_ITEM And n <> TILE_TYPE_NPCSPAWN Then
+                If n <> TileWalkable And n <> TileItem And n <> TileNPCSpawn Then
                     CanNpcMove = False
                     Exit Function
                 End If
@@ -643,7 +643,7 @@ Function CanNpcMove(ByVal mapnum As Long, ByVal mapNpcNum As Long, ByVal Dir As 
                 Next
                 
                 ' Directional blocking
-                If isDirBlocked(Map(mapnum).Tile(MapNpc(mapnum).Npc(mapNpcNum).x, MapNpc(mapnum).Npc(mapNpcNum).y).DirBlock, DIR_DOWN + 1) Then
+                If isDirBlocked(Map(mapnum).Tile(MapNpc(mapnum).Npc(mapNpcNum).x, MapNpc(mapnum).Npc(mapNpcNum).y).DirBlock, DirectionDown + 1) Then
                     CanNpcMove = False
                     Exit Function
                 End If
@@ -651,14 +651,14 @@ Function CanNpcMove(ByVal mapnum As Long, ByVal mapNpcNum As Long, ByVal Dir As 
                 CanNpcMove = False
             End If
 
-        Case DIR_LEFT
+        Case DirectionLeft
 
             ' Check to make sure not outside of boundries
             If x > 0 Then
                 n = Map(mapnum).Tile(x - 1, y).Type
 
                 ' Check to make sure that the tile is walkable
-                If n <> TILE_TYPE_WALKABLE And n <> TILE_TYPE_ITEM And n <> TILE_TYPE_NPCSPAWN Then
+                If n <> TileWalkable And n <> TileItem And n <> TileNPCSpawn Then
                     CanNpcMove = False
                     Exit Function
                 End If
@@ -682,7 +682,7 @@ Function CanNpcMove(ByVal mapnum As Long, ByVal mapNpcNum As Long, ByVal Dir As 
                 Next
                 
                 ' Directional blocking
-                If isDirBlocked(Map(mapnum).Tile(MapNpc(mapnum).Npc(mapNpcNum).x, MapNpc(mapnum).Npc(mapNpcNum).y).DirBlock, DIR_LEFT + 1) Then
+                If isDirBlocked(Map(mapnum).Tile(MapNpc(mapnum).Npc(mapNpcNum).x, MapNpc(mapnum).Npc(mapNpcNum).y).DirBlock, DirectionLeft + 1) Then
                     CanNpcMove = False
                     Exit Function
                 End If
@@ -690,14 +690,14 @@ Function CanNpcMove(ByVal mapnum As Long, ByVal mapNpcNum As Long, ByVal Dir As 
                 CanNpcMove = False
             End If
 
-        Case DIR_RIGHT
+        Case DirectionRight
 
             ' Check to make sure not outside of boundries
             If x < Map(mapnum).MaxX Then
                 n = Map(mapnum).Tile(x + 1, y).Type
 
                 ' Check to make sure that the tile is walkable
-                If n <> TILE_TYPE_WALKABLE And n <> TILE_TYPE_ITEM And n <> TILE_TYPE_NPCSPAWN Then
+                If n <> TileWalkable And n <> TileItem And n <> TileNPCSpawn Then
                     CanNpcMove = False
                     Exit Function
                 End If
@@ -721,7 +721,7 @@ Function CanNpcMove(ByVal mapnum As Long, ByVal mapNpcNum As Long, ByVal Dir As 
                 Next
                 
                 ' Directional blocking
-                If isDirBlocked(Map(mapnum).Tile(MapNpc(mapnum).Npc(mapNpcNum).x, MapNpc(mapnum).Npc(mapNpcNum).y).DirBlock, DIR_RIGHT + 1) Then
+                If isDirBlocked(Map(mapnum).Tile(MapNpc(mapnum).Npc(mapNpcNum).x, MapNpc(mapnum).Npc(mapNpcNum).y).DirBlock, DirectionRight + 1) Then
                     CanNpcMove = False
                     Exit Function
                 End If
@@ -738,7 +738,7 @@ Sub NpcMove(ByVal mapnum As Long, ByVal mapNpcNum As Long, ByVal Dir As Long, By
     Dim buffer As clsBuffer
 
     ' Check for subscript out of range
-    If mapnum <= 0 Or mapnum > MAX_MAPS Or mapNpcNum <= 0 Or mapNpcNum > MAX_MAP_NPCS Or Dir < DIR_UP Or Dir > DIR_RIGHT Or movement < 1 Or movement > 2 Then
+    If mapnum <= 0 Or mapnum > MAX_MAPS Or mapNpcNum <= 0 Or mapNpcNum > MAX_MAP_NPCS Or Dir < DirectionUp Or Dir > DirectionRight Or movement < 1 Or movement > 2 Then
         Exit Sub
     End If
 
@@ -746,7 +746,7 @@ Sub NpcMove(ByVal mapnum As Long, ByVal mapNpcNum As Long, ByVal Dir As Long, By
     UpdateMapBlock mapnum, MapNpc(mapnum).Npc(mapNpcNum).x, MapNpc(mapnum).Npc(mapNpcNum).y, False
 
     Select Case Dir
-        Case DIR_UP
+        Case DirectionUp
             MapNpc(mapnum).Npc(mapNpcNum).y = MapNpc(mapnum).Npc(mapNpcNum).y - 1
             Set buffer = New clsBuffer
             buffer.WriteLong SNpcMove
@@ -757,7 +757,7 @@ Sub NpcMove(ByVal mapnum As Long, ByVal mapNpcNum As Long, ByVal Dir As Long, By
             buffer.WriteLong movement
             SendDataToMap mapnum, buffer.ToArray()
             Set buffer = Nothing
-        Case DIR_DOWN
+        Case DirectionDown
             MapNpc(mapnum).Npc(mapNpcNum).y = MapNpc(mapnum).Npc(mapNpcNum).y + 1
             Set buffer = New clsBuffer
             buffer.WriteLong SNpcMove
@@ -768,7 +768,7 @@ Sub NpcMove(ByVal mapnum As Long, ByVal mapNpcNum As Long, ByVal Dir As Long, By
             buffer.WriteLong movement
             SendDataToMap mapnum, buffer.ToArray()
             Set buffer = Nothing
-        Case DIR_LEFT
+        Case DirectionLeft
             MapNpc(mapnum).Npc(mapNpcNum).x = MapNpc(mapnum).Npc(mapNpcNum).x - 1
             Set buffer = New clsBuffer
             buffer.WriteLong SNpcMove
@@ -779,7 +779,7 @@ Sub NpcMove(ByVal mapnum As Long, ByVal mapNpcNum As Long, ByVal Dir As Long, By
             buffer.WriteLong movement
             SendDataToMap mapnum, buffer.ToArray()
             Set buffer = Nothing
-        Case DIR_RIGHT
+        Case DirectionRight
             MapNpc(mapnum).Npc(mapNpcNum).x = MapNpc(mapnum).Npc(mapNpcNum).x + 1
             Set buffer = New clsBuffer
             buffer.WriteLong SNpcMove
@@ -801,7 +801,7 @@ Sub NpcDir(ByVal mapnum As Long, ByVal mapNpcNum As Long, ByVal Dir As Long)
     Dim buffer As clsBuffer
 
     ' Check for subscript out of range
-    If mapnum <= 0 Or mapnum > MAX_MAPS Or mapNpcNum <= 0 Or mapNpcNum > MAX_MAP_NPCS Or Dir < DIR_UP Or Dir > DIR_RIGHT Then
+    If mapnum <= 0 Or mapnum > MAX_MAPS Or mapNpcNum <= 0 Or mapNpcNum > MAX_MAP_NPCS Or Dir < DirectionUp Or Dir > DirectionRight Then
         Exit Sub
     End If
 
@@ -860,7 +860,7 @@ Public Sub CacheResources(ByVal mapnum As Long)
     For x = 0 To Map(mapnum).MaxX
         For y = 0 To Map(mapnum).MaxY
 
-            If Map(mapnum).Tile(x, y).Type = TILE_TYPE_RESOURCE Then
+            If Map(mapnum).Tile(x, y).Type = TileResource Then
                 Resource_Count = Resource_Count + 1
                 ReDim Preserve ResourceCache(mapnum).ResourceData(0 To Resource_Count)
                 ResourceCache(mapnum).ResourceData(Resource_Count).x = x
@@ -1298,7 +1298,7 @@ Function CanEventMove(index As Long, ByVal mapnum As Long, x As Long, y As Long,
     Dim n As Long, z As Long
 
     ' Check for subscript out of range
-    If mapnum <= 0 Or mapnum > MAX_MAPS Or Dir < DIR_UP Or Dir > DIR_RIGHT Then
+    If mapnum <= 0 Or mapnum > MAX_MAPS Or Dir < DirectionUp Or Dir > DirectionRight Then
         Exit Function
     End If
     CanEventMove = True
@@ -1306,7 +1306,7 @@ Function CanEventMove(index As Long, ByVal mapnum As Long, x As Long, y As Long,
     
 
     Select Case Dir
-        Case DIR_UP
+        Case DirectionUp
 
             ' Check to make sure not outside of boundries
             If y > 0 Then
@@ -1319,7 +1319,7 @@ Function CanEventMove(index As Long, ByVal mapnum As Long, x As Long, y As Long,
                 
                 
                 ' Check to make sure that the tile is walkable
-                If n <> TILE_TYPE_WALKABLE And n <> TILE_TYPE_ITEM And n <> TILE_TYPE_NPCSPAWN Then
+                If n <> TileWalkable And n <> TileItem And n <> TileNPCSpawn Then
                     CanEventMove = False
                     Exit Function
                 End If
@@ -1363,7 +1363,7 @@ Function CanEventMove(index As Long, ByVal mapnum As Long, x As Long, y As Long,
                 End If
                 
                 ' Directional blocking
-                If isDirBlocked(Map(mapnum).Tile(x, y).DirBlock, DIR_UP + 1) Then
+                If isDirBlocked(Map(mapnum).Tile(x, y).DirBlock, DirectionUp + 1) Then
                     CanEventMove = False
                     Exit Function
                 End If
@@ -1371,7 +1371,7 @@ Function CanEventMove(index As Long, ByVal mapnum As Long, x As Long, y As Long,
                 CanEventMove = False
             End If
 
-        Case DIR_DOWN
+        Case DirectionDown
 
             ' Check to make sure not outside of boundries
             If y < Map(mapnum).MaxY Then
@@ -1383,7 +1383,7 @@ Function CanEventMove(index As Long, ByVal mapnum As Long, x As Long, y As Long,
                 End If
 
                 ' Check to make sure that the tile is walkable
-                If n <> TILE_TYPE_WALKABLE And n <> TILE_TYPE_ITEM And n <> TILE_TYPE_NPCSPAWN Then
+                If n <> TileWalkable And n <> TileItem And n <> TileNPCSpawn Then
                     CanEventMove = False
                     Exit Function
                 End If
@@ -1427,7 +1427,7 @@ Function CanEventMove(index As Long, ByVal mapnum As Long, x As Long, y As Long,
                 End If
                 
                 ' Directional blocking
-                If isDirBlocked(Map(mapnum).Tile(x, y).DirBlock, DIR_DOWN + 1) Then
+                If isDirBlocked(Map(mapnum).Tile(x, y).DirBlock, DirectionDown + 1) Then
                     CanEventMove = False
                     Exit Function
                 End If
@@ -1435,7 +1435,7 @@ Function CanEventMove(index As Long, ByVal mapnum As Long, x As Long, y As Long,
                 CanEventMove = False
             End If
 
-        Case DIR_LEFT
+        Case DirectionLeft
 
             ' Check to make sure not outside of boundries
             If x > 0 Then
@@ -1447,7 +1447,7 @@ Function CanEventMove(index As Long, ByVal mapnum As Long, x As Long, y As Long,
                 End If
 
                 ' Check to make sure that the tile is walkable
-                If n <> TILE_TYPE_WALKABLE And n <> TILE_TYPE_ITEM And n <> TILE_TYPE_NPCSPAWN Then
+                If n <> TileWalkable And n <> TileItem And n <> TileNPCSpawn Then
                     CanEventMove = False
                     Exit Function
                 End If
@@ -1491,7 +1491,7 @@ Function CanEventMove(index As Long, ByVal mapnum As Long, x As Long, y As Long,
                 End If
                 
                 ' Directional blocking
-                If isDirBlocked(Map(mapnum).Tile(x, y).DirBlock, DIR_LEFT + 1) Then
+                If isDirBlocked(Map(mapnum).Tile(x, y).DirBlock, DirectionLeft + 1) Then
                     CanEventMove = False
                     Exit Function
                 End If
@@ -1499,7 +1499,7 @@ Function CanEventMove(index As Long, ByVal mapnum As Long, x As Long, y As Long,
                 CanEventMove = False
             End If
 
-        Case DIR_RIGHT
+        Case DirectionRight
 
             ' Check to make sure not outside of boundries
             If x < Map(mapnum).MaxX Then
@@ -1511,7 +1511,7 @@ Function CanEventMove(index As Long, ByVal mapnum As Long, x As Long, y As Long,
                 End If
 
                 ' Check to make sure that the tile is walkable
-                If n <> TILE_TYPE_WALKABLE And n <> TILE_TYPE_ITEM And n <> TILE_TYPE_NPCSPAWN Then
+                If n <> TileWalkable And n <> TileItem And n <> TileNPCSpawn Then
                     CanEventMove = False
                     Exit Function
                 End If
@@ -1555,7 +1555,7 @@ Function CanEventMove(index As Long, ByVal mapnum As Long, x As Long, y As Long,
                 End If
                 
                 ' Directional blocking
-                If isDirBlocked(Map(mapnum).Tile(x, y).DirBlock, DIR_RIGHT + 1) Then
+                If isDirBlocked(Map(mapnum).Tile(x, y).DirBlock, DirectionRight + 1) Then
                     CanEventMove = False
                     Exit Function
                 End If
@@ -1571,7 +1571,7 @@ Sub EventDir(playerindex As Long, ByVal mapnum As Long, ByVal eventID As Long, B
     Dim buffer As clsBuffer
 
     ' Check for subscript out of range
-    If mapnum <= 0 Or mapnum > MAX_MAPS Or Dir < DIR_UP Or Dir > DIR_RIGHT Then
+    If mapnum <= 0 Or mapnum > MAX_MAPS Or Dir < DirectionUp Or Dir > DirectionRight Then
         Exit Sub
     End If
     
@@ -1598,7 +1598,7 @@ Sub EventMove(index As Long, mapnum As Long, ByVal eventID As Long, ByVal Dir As
     Dim buffer As clsBuffer
 
     ' Check for subscript out of range
-    If mapnum <= 0 Or mapnum > MAX_MAPS Or Dir < DIR_UP Or Dir > DIR_RIGHT Then
+    If mapnum <= 0 Or mapnum > MAX_MAPS Or Dir < DirectionUp Or Dir > DirectionRight Then
         Exit Sub
     End If
     
@@ -1610,7 +1610,7 @@ Sub EventMove(index As Long, mapnum As Long, ByVal eventID As Long, ByVal Dir As
     End If
 
     Select Case Dir
-        Case DIR_UP
+        Case DirectionUp
             If globalevent Then
                 TempEventMap(mapnum).Events(eventID).y = TempEventMap(mapnum).Events(eventID).y - 1
                 UpdateMapBlock mapnum, TempEventMap(mapnum).Events(eventID).x, TempEventMap(mapnum).Events(eventID).y, True
@@ -1646,7 +1646,7 @@ Sub EventMove(index As Long, mapnum As Long, ByVal eventID As Long, ByVal Dir As
                 Set buffer = Nothing
             End If
             
-        Case DIR_DOWN
+        Case DirectionDown
             If globalevent Then
                 TempEventMap(mapnum).Events(eventID).y = TempEventMap(mapnum).Events(eventID).y + 1
                 UpdateMapBlock mapnum, TempEventMap(mapnum).Events(eventID).x, TempEventMap(mapnum).Events(eventID).y, True
@@ -1681,7 +1681,7 @@ Sub EventMove(index As Long, mapnum As Long, ByVal eventID As Long, ByVal Dir As
                 End If
                 Set buffer = Nothing
             End If
-        Case DIR_LEFT
+        Case DirectionLeft
             If globalevent Then
                 TempEventMap(mapnum).Events(eventID).x = TempEventMap(mapnum).Events(eventID).x - 1
                 UpdateMapBlock mapnum, TempEventMap(mapnum).Events(eventID).x, TempEventMap(mapnum).Events(eventID).y, True
@@ -1716,7 +1716,7 @@ Sub EventMove(index As Long, mapnum As Long, ByVal eventID As Long, ByVal Dir As
                 End If
                 Set buffer = Nothing
             End If
-        Case DIR_RIGHT
+        Case DirectionRight
             If globalevent Then
                 TempEventMap(mapnum).Events(eventID).x = TempEventMap(mapnum).Events(eventID).x + 1
                 UpdateMapBlock mapnum, TempEventMap(mapnum).Events(eventID).x, TempEventMap(mapnum).Events(eventID).y, True

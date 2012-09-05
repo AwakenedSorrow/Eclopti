@@ -241,29 +241,29 @@ Dim MovementSpeed As Long
 
     ' Check if player is walking, and if so process moving them over
     Select Case Player(Index).Moving
-        Case MOVING_WALKING: MovementSpeed = ((ElapsedTime / 1000) * (RUN_SPEED * SIZE_X))
-        Case MOVING_RUNNING: MovementSpeed = ((ElapsedTime / 1000) * (WALK_SPEED * SIZE_X))
+        Case PlayerWalking: MovementSpeed = ((ElapsedTime / 1000) * (RUN_SPEED * SIZE_X))
+        Case PlayerRunning: MovementSpeed = ((ElapsedTime / 1000) * (WALK_SPEED * SIZE_X))
         Case Else: Exit Sub
     End Select
     
     Select Case GetPlayerDir(Index)
-        Case DIR_UP
+        Case DirectionUp
             Player(Index).yOffset = Player(Index).yOffset - MovementSpeed
             If Player(Index).yOffset < 0 Then Player(Index).yOffset = 0
-        Case DIR_DOWN
+        Case DirectionDown
             Player(Index).yOffset = Player(Index).yOffset + MovementSpeed
             If Player(Index).yOffset > 0 Then Player(Index).yOffset = 0
-        Case DIR_LEFT
+        Case DirectionLeft
             Player(Index).xOffset = Player(Index).xOffset - MovementSpeed
             If Player(Index).xOffset < 0 Then Player(Index).xOffset = 0
-        Case DIR_RIGHT
+        Case DirectionRight
             Player(Index).xOffset = Player(Index).xOffset + MovementSpeed
             If Player(Index).xOffset > 0 Then Player(Index).xOffset = 0
     End Select
 
     ' Check if completed walking over to the next tile
     If Player(Index).Moving > 0 Then
-        If GetPlayerDir(Index) = DIR_RIGHT Or GetPlayerDir(Index) = DIR_DOWN Then
+        If GetPlayerDir(Index) = DirectionRight Or GetPlayerDir(Index) = DirectionDown Then
             If (Player(Index).xOffset >= 0) And (Player(Index).yOffset >= 0) Then
                 Player(Index).Moving = 0
                 If Player(Index).Step = 1 Then
@@ -298,22 +298,22 @@ Sub ProcessNpcMovement(ByVal MapNpcNum As Long)
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     ' Check if NPC is walking, and if so process moving them over
-    If MapNpc(MapNpcNum).Moving = MOVING_WALKING Then
+    If MapNpc(MapNpcNum).Moving = PlayerWalking Then
         
         Select Case MapNpc(MapNpcNum).Dir
-            Case DIR_UP
+            Case DirectionUp
                 MapNpc(MapNpcNum).yOffset = MapNpc(MapNpcNum).yOffset - ((ElapsedTime / 1000) * (WALK_SPEED * SIZE_X))
                 If MapNpc(MapNpcNum).yOffset < 0 Then MapNpc(MapNpcNum).yOffset = 0
                 
-            Case DIR_DOWN
+            Case DirectionDown
                 MapNpc(MapNpcNum).yOffset = MapNpc(MapNpcNum).yOffset + ((ElapsedTime / 1000) * (WALK_SPEED * SIZE_X))
                 If MapNpc(MapNpcNum).yOffset > 0 Then MapNpc(MapNpcNum).yOffset = 0
                 
-            Case DIR_LEFT
+            Case DirectionLeft
                 MapNpc(MapNpcNum).xOffset = MapNpc(MapNpcNum).xOffset - ((ElapsedTime / 1000) * (WALK_SPEED * SIZE_X))
                 If MapNpc(MapNpcNum).xOffset < 0 Then MapNpc(MapNpcNum).xOffset = 0
                 
-            Case DIR_RIGHT
+            Case DirectionRight
                 MapNpc(MapNpcNum).xOffset = MapNpc(MapNpcNum).xOffset + ((ElapsedTime / 1000) * (WALK_SPEED * SIZE_X))
                 If MapNpc(MapNpcNum).xOffset > 0 Then MapNpc(MapNpcNum).xOffset = 0
                 
@@ -321,7 +321,7 @@ Sub ProcessNpcMovement(ByVal MapNpcNum As Long)
     
         ' Check if completed walking over to the next tile
         If MapNpc(MapNpcNum).Moving > 0 Then
-            If MapNpc(MapNpcNum).Dir = DIR_RIGHT Or MapNpc(MapNpcNum).Dir = DIR_DOWN Then
+            If MapNpc(MapNpcNum).Dir = DirectionRight Or MapNpc(MapNpcNum).Dir = DirectionDown Then
                 If (MapNpc(MapNpcNum).xOffset >= 0) And (MapNpc(MapNpcNum).yOffset >= 0) Then
                     MapNpc(MapNpcNum).Moving = 0
                     If MapNpc(MapNpcNum).Step = 1 Then
@@ -412,16 +412,16 @@ Dim attackspeed As Long, x As Long, y As Long, i As Long
         End If
         
         Select Case Player(MyIndex).Dir
-            Case DIR_UP
+            Case DirectionUp
                 x = GetPlayerX(MyIndex)
                 y = GetPlayerY(MyIndex) - 1
-            Case DIR_DOWN
+            Case DirectionDown
                 x = GetPlayerX(MyIndex)
                 y = GetPlayerY(MyIndex) + 1
-            Case DIR_LEFT
+            Case DirectionLeft
                 x = GetPlayerX(MyIndex) - 1
                 y = GetPlayerY(MyIndex)
-            Case DIR_RIGHT
+            Case DirectionRight
                 x = GetPlayerX(MyIndex) + 1
                 y = GetPlayerY(MyIndex)
         End Select
@@ -517,15 +517,15 @@ Dim d As Long
     d = GetPlayerDir(MyIndex)
 
     If DirUp Then
-        Call SetPlayerDir(MyIndex, DIR_UP)
+        Call SetPlayerDir(MyIndex, DirectionUp)
 
         ' Check to see if they are trying to go out of bounds
         If GetPlayerY(MyIndex) > 0 Then
-            If CheckDirection(DIR_UP) Then
+            If CheckDirection(DirectionUp) Then
                 CanMove = False
 
                 ' Set the new direction if they weren't facing that direction
-                If d <> DIR_UP Then
+                If d <> DirectionUp Then
                     Call SendPlayerDir
                 End If
 
@@ -548,15 +548,15 @@ Dim d As Long
     End If
 
     If DirDown Then
-        Call SetPlayerDir(MyIndex, DIR_DOWN)
+        Call SetPlayerDir(MyIndex, DirectionDown)
 
         ' Check to see if they are trying to go out of bounds
         If GetPlayerY(MyIndex) < Map.MaxY Then
-            If CheckDirection(DIR_DOWN) Then
+            If CheckDirection(DirectionDown) Then
                 CanMove = False
 
                 ' Set the new direction if they weren't facing that direction
-                If d <> DIR_DOWN Then
+                If d <> DirectionDown Then
                     Call SendPlayerDir
                 End If
 
@@ -579,15 +579,15 @@ Dim d As Long
     End If
 
     If DirLeft Then
-        Call SetPlayerDir(MyIndex, DIR_LEFT)
+        Call SetPlayerDir(MyIndex, DirectionLeft)
 
         ' Check to see if they are trying to go out of bounds
         If GetPlayerX(MyIndex) > 0 Then
-            If CheckDirection(DIR_LEFT) Then
+            If CheckDirection(DirectionLeft) Then
                 CanMove = False
 
                 ' Set the new direction if they weren't facing that direction
-                If d <> DIR_LEFT Then
+                If d <> DirectionLeft Then
                     Call SendPlayerDir
                 End If
 
@@ -610,15 +610,15 @@ Dim d As Long
     End If
 
     If DirRight Then
-        Call SetPlayerDir(MyIndex, DIR_RIGHT)
+        Call SetPlayerDir(MyIndex, DirectionRight)
 
         ' Check to see if they are trying to go out of bounds
         If GetPlayerX(MyIndex) < Map.MaxX Then
-            If CheckDirection(DIR_RIGHT) Then
+            If CheckDirection(DirectionRight) Then
                 CanMove = False
 
                 ' Set the new direction if they weren't facing that direction
-                If d <> DIR_RIGHT Then
+                If d <> DirectionRight Then
                     Call SendPlayerDir
                 End If
 
@@ -665,34 +665,34 @@ Dim i As Long
     End If
 
     Select Case Direction
-        Case DIR_UP
+        Case DirectionUp
             x = GetPlayerX(MyIndex)
             y = GetPlayerY(MyIndex) - 1
-        Case DIR_DOWN
+        Case DirectionDown
             x = GetPlayerX(MyIndex)
             y = GetPlayerY(MyIndex) + 1
-        Case DIR_LEFT
+        Case DirectionLeft
             x = GetPlayerX(MyIndex) - 1
             y = GetPlayerY(MyIndex)
-        Case DIR_RIGHT
+        Case DirectionRight
             x = GetPlayerX(MyIndex) + 1
             y = GetPlayerY(MyIndex)
     End Select
 
     ' Check to see if the map tile is blocked or not
-    If Map.Tile(x, y).Type = TILE_TYPE_BLOCKED Then
+    If Map.Tile(x, y).Type = TileBlocked Then
         CheckDirection = True
         Exit Function
     End If
 
     ' Check to see if the map tile is tree or not
-    If Map.Tile(x, y).Type = TILE_TYPE_RESOURCE Then
+    If Map.Tile(x, y).Type = TileResource Then
         CheckDirection = True
         Exit Function
     End If
 
     ' Check to see if the key door is open or not
-    If Map.Tile(x, y).Type = TILE_TYPE_KEY Then
+    If Map.Tile(x, y).Type = TileKey Then
 
         ' This actually checks if its open or not
         If TempTile(x, y).DoorOpen = NO Then
@@ -755,25 +755,25 @@ Sub CheckMovement()
 
             ' Check if player has the shift key down for running
             If ShiftDown Then
-                Player(MyIndex).Moving = MOVING_RUNNING
+                Player(MyIndex).Moving = PlayerRunning
             Else
-                Player(MyIndex).Moving = MOVING_WALKING
+                Player(MyIndex).Moving = PlayerWalking
             End If
 
             Select Case GetPlayerDir(MyIndex)
-                Case DIR_UP
+                Case DirectionUp
                     Call SendPlayerMove
                     Player(MyIndex).yOffset = PIC_Y
                     Call SetPlayerY(MyIndex, GetPlayerY(MyIndex) - 1)
-                Case DIR_DOWN
+                Case DirectionDown
                     Call SendPlayerMove
                     Player(MyIndex).yOffset = PIC_Y * -1
                     Call SetPlayerY(MyIndex, GetPlayerY(MyIndex) + 1)
-                Case DIR_LEFT
+                Case DirectionLeft
                     Call SendPlayerMove
                     Player(MyIndex).xOffset = PIC_X
                     Call SetPlayerX(MyIndex, GetPlayerX(MyIndex) - 1)
-                Case DIR_RIGHT
+                Case DirectionRight
                     Call SendPlayerMove
                     Player(MyIndex).xOffset = PIC_X * -1
                     Call SetPlayerX(MyIndex, GetPlayerX(MyIndex) + 1)
@@ -781,7 +781,7 @@ Sub CheckMovement()
 
             If Player(MyIndex).xOffset = 0 Then
                 If Player(MyIndex).yOffset = 0 Then
-                    If Map.Tile(GetPlayerX(MyIndex), GetPlayerY(MyIndex)).Type = TILE_TYPE_WARP Then
+                    If Map.Tile(GetPlayerX(MyIndex), GetPlayerY(MyIndex)).Type = TileWarp Then
                         GettingMap = True
                     End If
                 End If
@@ -827,9 +827,9 @@ Public Sub UpdateDrawMapName()
     DrawMapNameY = 1
 
     Select Case Map.Moral
-        Case MAP_MORAL_NONE
+        Case MoralNone
             DrawMapNameColor = BrightRed
-        Case MAP_MORAL_SAFE
+        Case MoralSafe
             DrawMapNameColor = White
         Case Else
             DrawMapNameColor = White
@@ -981,7 +981,7 @@ Public Sub DevMsg(ByVal text As String, ByVal color As Byte)
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
     If InGame Then
-        If GetPlayerAccess(MyIndex) > ADMIN_DEVELOPER Then
+        If GetPlayerAccess(MyIndex) > RankDeveloper Then
             Call AddText(text, color)
         End If
     End If
@@ -1183,7 +1183,7 @@ Dim x As Long, y As Long, Resource_Count As Long
 
     For x = 0 To Map.MaxX
         For y = 0 To Map.MaxY
-            If Map.Tile(x, y).Type = TILE_TYPE_RESOURCE Then
+            If Map.Tile(x, y).Type = TileResource Then
                 Resource_Count = Resource_Count + 1
                 ReDim Preserve MapResource(0 To Resource_Count)
                 MapResource(Resource_Count).x = x
@@ -1221,7 +1221,7 @@ Dim i As Long
         .y = y
     End With
 
-    If ActionMsg(ActionMsgIndex).Type = ACTIONMSG_SCROLL Then
+    If ActionMsg(ActionMsgIndex).Type = MsgScroll Then
         ActionMsg(ActionMsgIndex).y = ActionMsg(ActionMsgIndex).y + Rand(-2, 6)
         ActionMsg(ActionMsgIndex).x = ActionMsg(ActionMsgIndex).x + Rand(-8, 8)
     End If
@@ -1575,19 +1575,19 @@ Public Sub dialogueHandler(ByVal Index As Long)
     ElseIf Index = 2 Then ' yes button
         ' dialogue index
         Select Case dialogueIndex
-            Case DIALOGUE_TYPE_TRADE
+            Case DialogueTrade
                 SendAcceptTradeRequest
-            Case DIALOGUE_TYPE_FORGET
+            Case DialogueForget
                 ForgetSpell dialogueData1
-            Case DIALOGUE_TYPE_PARTY
+            Case DialogueParty
                 SendAcceptParty
         End Select
     ElseIf Index = 3 Then ' no button
         ' dialogue index
         Select Case dialogueIndex
-            Case DIALOGUE_TYPE_TRADE
+            Case DialogueTrade
                 SendDeclineTradeRequest
-            Case DIALOGUE_TYPE_PARTY
+            Case DialogueParty
                 SendDeclineParty
         End Select
     End If
@@ -1602,19 +1602,19 @@ Sub ProcessEventMovement(ByVal id As Long)
     If Map.MapEvents(id).Moving = 1 Then
         
         Select Case Map.MapEvents(id).Dir
-            Case DIR_UP
+            Case DirectionUp
                 Map.MapEvents(id).yOffset = Map.MapEvents(id).yOffset - ((ElapsedTime / 1000) * (Map.MapEvents(id).MovementSpeed * SIZE_X))
                 If Map.MapEvents(id).yOffset < 0 Then Map.MapEvents(id).yOffset = 0
                 
-            Case DIR_DOWN
+            Case DirectionDown
                 Map.MapEvents(id).yOffset = Map.MapEvents(id).yOffset + ((ElapsedTime / 1000) * (Map.MapEvents(id).MovementSpeed * SIZE_X))
                 If Map.MapEvents(id).yOffset > 0 Then Map.MapEvents(id).yOffset = 0
                 
-            Case DIR_LEFT
+            Case DirectionLeft
                 Map.MapEvents(id).xOffset = Map.MapEvents(id).xOffset - ((ElapsedTime / 1000) * (Map.MapEvents(id).MovementSpeed * SIZE_X))
                 If Map.MapEvents(id).xOffset < 0 Then Map.MapEvents(id).xOffset = 0
                 
-            Case DIR_RIGHT
+            Case DirectionRight
                 Map.MapEvents(id).xOffset = Map.MapEvents(id).xOffset + ((ElapsedTime / 1000) * (Map.MapEvents(id).MovementSpeed * SIZE_X))
                 If Map.MapEvents(id).xOffset > 0 Then Map.MapEvents(id).xOffset = 0
                 
@@ -1622,7 +1622,7 @@ Sub ProcessEventMovement(ByVal id As Long)
     
         ' Check if completed walking over to the next tile
         If Map.MapEvents(id).Moving > 0 Then
-            If Map.MapEvents(id).Dir = DIR_RIGHT Or Map.MapEvents(id).Dir = DIR_DOWN Then
+            If Map.MapEvents(id).Dir = DirectionRight Or Map.MapEvents(id).Dir = DirectionDown Then
                 If (Map.MapEvents(id).xOffset >= 0) And (Map.MapEvents(id).yOffset >= 0) Then
                     Map.MapEvents(id).Moving = 0
                     If Map.MapEvents(id).Step = 1 Then
@@ -1769,7 +1769,7 @@ Dim i As Long
         End If
     End If
     
-    If CurrentWeather = WEATHER_TYPE_STORM Then
+    If CurrentWeather = WeatherStorm Then
         i = Rand(1, 400 - CurrentWeatherIntensity)
         If i = 1 Then
             'Draw Thunder

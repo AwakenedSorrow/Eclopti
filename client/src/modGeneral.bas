@@ -194,7 +194,7 @@ Public Sub MenuState(ByVal state As Long)
     frmLoad.Visible = True
 
     Select Case state
-        Case MENU_STATE_ADDCHAR
+        Case StateAddChar
             frmMenu.Visible = False
             frmMenu.picCredits.Visible = False
             frmMenu.picLogin.Visible = False
@@ -205,13 +205,13 @@ Public Sub MenuState(ByVal state As Long)
                 Call SetStatus("Connected, sending character addition data...")
 
                 If frmMenu.optMale.value Then
-                    Call SendAddChar(frmMenu.txtCName, SEX_MALE, frmMenu.cmbClass.ListIndex + 1, newCharSprite)
+                    Call SendAddChar(frmMenu.txtCName, Male, frmMenu.cmbClass.ListIndex + 1, newCharSprite)
                 Else
-                    Call SendAddChar(frmMenu.txtCName, SEX_FEMALE, frmMenu.cmbClass.ListIndex + 1, newCharSprite)
+                    Call SendAddChar(frmMenu.txtCName, Female, frmMenu.cmbClass.ListIndex + 1, newCharSprite)
                 End If
             End If
             
-        Case MENU_STATE_NEWACCOUNT
+        Case StateNewAccount
             frmMenu.Visible = False
             frmMenu.picCredits.Visible = False
             frmMenu.picLogin.Visible = False
@@ -220,10 +220,10 @@ Public Sub MenuState(ByVal state As Long)
 
             If ConnectToServer(1) Then
                 Call SetStatus("Connected, sending new account information...")
-                Call SendNewAccount(frmMenu.txtRUser.Text, frmMenu.txtRPass.Text)
+                Call SendNewAccount(frmMenu.txtRUser.text, frmMenu.txtRPass.text)
             End If
 
-        Case MENU_STATE_LOGIN
+        Case StateLogin
             frmMenu.Visible = False
             frmMenu.picCredits.Visible = False
             frmMenu.picLogin.Visible = False
@@ -232,7 +232,7 @@ Public Sub MenuState(ByVal state As Long)
 
             If ConnectToServer(1) Then
                 Call SetStatus("Connected, sending login information...")
-                Call SendLogin(frmMenu.txtLUser.Text, frmMenu.txtLPass.Text)
+                Call SendLogin(frmMenu.txtLUser.text, frmMenu.txtLPass.text)
                 Exit Sub
             End If
     End Select
@@ -259,14 +259,14 @@ errorhandler:
 End Sub
 
 Public Sub logoutGame()
-Dim Buffer As clsBuffer, i As Long
+Dim buffer As clsBuffer, i As Long
 
     isLogging = True
     InGame = False
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CQuit
-    SendData Buffer.ToArray()
-    Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong CQuit
+    SendData buffer.ToArray()
+    Set buffer = Nothing
     Call DestroyTCP
     
     ' destroy the animations loaded
@@ -301,8 +301,8 @@ Dim Buffer As clsBuffer, i As Long
     
     ' hide main form stuffs
     frmMenu.picMain.Visible = True
-    frmMain.txtChat.Text = vbNullString
-    frmMain.txtMyChat.Text = vbNullString
+    frmMain.txtChat.text = vbNullString
+    frmMain.txtMyChat.text = vbNullString
     frmMain.picCurrency.Visible = False
     frmMain.picDialogue.Visible = False
     frmMain.picInventory.Visible = True
@@ -434,12 +434,12 @@ Public Sub TextAdd(ByVal Txt As TextBox, Msg As String, NewLine As Boolean)
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If NewLine Then
-        Txt.Text = Txt.Text + Msg + vbCrLf
+        Txt.text = Txt.text + Msg + vbCrLf
     Else
-        Txt.Text = Txt.Text + Msg
+        Txt.text = Txt.text + Msg
     End If
 
-    Txt.SelStart = Len(Txt.Text) - 1
+    Txt.SelStart = Len(Txt.text) - 1
     
     ' Error handler
     Exit Sub

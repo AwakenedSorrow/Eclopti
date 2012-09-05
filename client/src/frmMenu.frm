@@ -801,7 +801,7 @@ Private Sub lblLAccept_Click()
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
     If isLoginLegal(txtLUser.text, txtLPass.text) Then
-        Call MenuState(MENU_STATE_LOGIN)
+        Call MenuState(StateLogin)
     End If
 
     ' Error handler
@@ -963,7 +963,7 @@ Private Sub txtRAccept_Click()
             Exit Sub
         End If
 
-        Call MenuState(MENU_STATE_NEWACCOUNT)
+        Call MenuState(StateNewAccount)
     End If
     
     ' Error handler
@@ -979,7 +979,7 @@ Private Sub lblCAccept_Click()
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
-    Call MenuState(MENU_STATE_ADDCHAR)
+    Call MenuState(StateAddChar)
     
     ' Error handler
     Exit Sub

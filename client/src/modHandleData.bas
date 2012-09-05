@@ -704,13 +704,13 @@ Dim buffer As clsBuffer
     Player(i).Moving = n
 
     Select Case GetPlayerDir(i)
-        Case DIR_UP
+        Case DirectionUp
             Player(i).yOffset = PIC_Y
-        Case DIR_DOWN
+        Case DirectionDown
             Player(i).yOffset = PIC_Y * -1
-        Case DIR_LEFT
+        Case DirectionLeft
             Player(i).xOffset = PIC_X
-        Case DIR_RIGHT
+        Case DirectionRight
             Player(i).xOffset = PIC_X * -1
     End Select
     
@@ -750,13 +750,13 @@ Dim buffer As clsBuffer
         .Moving = Movement
 
         Select Case .Dir
-            Case DIR_UP
+            Case DirectionUp
                 .yOffset = PIC_Y
-            Case DIR_DOWN
+            Case DirectionDown
                 .yOffset = PIC_Y * -1
-            Case DIR_LEFT
+            Case DirectionLeft
                 .xOffset = PIC_X
-            Case DIR_RIGHT
+            Case DirectionRight
                 .xOffset = PIC_X * -1
         End Select
 
@@ -1384,7 +1384,7 @@ Dim i As Long
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
     With frmEditor_Item
-        Editor = EDITOR_ITEM
+        Editor = GEditorItem
         .lstIndex.Clear
 
         ' Add the names
@@ -1412,7 +1412,7 @@ Dim i As Long
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
     With frmEditor_Animation
-        Editor = EDITOR_ANIMATION
+        Editor = GEditorAnimation
         .lstIndex.Clear
 
         ' Add the names
@@ -1561,7 +1561,7 @@ Dim i As Long
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
     With frmEditor_NPC
-        Editor = EDITOR_NPC
+        Editor = GEditorNPC
         .lstIndex.Clear
 
         ' Add the names
@@ -1618,7 +1618,7 @@ Dim i As Long
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
     With frmEditor_Resource
-        Editor = EDITOR_RESOURCE
+        Editor = GEditorResource
         .lstIndex.Clear
 
         ' Add the names
@@ -1716,7 +1716,7 @@ Dim i As Long
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
     With frmEditor_Shop
-        Editor = EDITOR_SHOP
+        Editor = EditorShop
         .lstIndex.Clear
 
         ' Add the names
@@ -1773,7 +1773,7 @@ Dim i As Long
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
     With frmEditor_Spell
-        Editor = EDITOR_SPELL
+        Editor = GEditorSpell
         .lstIndex.Clear
 
         ' Add the names
@@ -2495,7 +2495,7 @@ Dim theName As String
     
     theName = buffer.ReadString
     
-    Dialogue "Trade Request", theName & " has requested a trade. Would you like to accept?", DIALOGUE_TYPE_TRADE, True
+    Dialogue "Trade Request", theName & " has requested a trade. Would you like to accept?", DialogueTrade, True
     
     ' Error handler
     Exit Sub
@@ -2517,7 +2517,7 @@ Dim theName As String
 
     theName = buffer.ReadString
     
-    Dialogue "Party Invitation", theName & " has invited you to a party. Would you like to join?", DIALOGUE_TYPE_PARTY, True
+    Dialogue "Party Invitation", theName & " has invited you to a party. Would you like to join?", DialogueParty, True
     
     ' Error handler
     Exit Sub
@@ -2699,13 +2699,13 @@ Dim buffer As clsBuffer
         
 
         Select Case Dir
-            Case DIR_UP
+            Case DirectionUp
                 .yOffset = PIC_Y
-            Case DIR_DOWN
+            Case DirectionDown
                 .yOffset = PIC_Y * -1
-            Case DIR_LEFT
+            Case DirectionLeft
                 .xOffset = PIC_X
-            Case DIR_RIGHT
+            Case DirectionRight
                 .xOffset = PIC_X * -1
         End Select
 
@@ -3118,22 +3118,22 @@ Dim buffer As clsBuffer, effectType As Long
     effectType = buffer.ReadLong
     
     Select Case effectType
-        Case EFFECT_TYPE_FADEIN
+        Case EffectFadeIn
             FadeType = 1
             FadeAmount = 0
-        Case EFFECT_TYPE_FADEOUT
+        Case EffectFadeOut
             FadeType = 0
             FadeAmount = 255
-        Case EFFECT_TYPE_FLASH
+        Case EffectFlash
             FlashTimer = GetTickCount + 150
-        Case EFFECT_TYPE_FOG
+        Case EffectFog
             CurrentFog = buffer.ReadLong
             CurrentFogSpeed = buffer.ReadLong
             CurrentFogOpacity = buffer.ReadLong
-        Case EFFECT_TYPE_WEATHER
+        Case EffectWeather
             CurrentWeather = buffer.ReadLong
             CurrentWeatherIntensity = buffer.ReadLong
-        Case EFFECT_TYPE_TINT
+        Case EffectTint
             CurrentTintR = buffer.ReadLong
             CurrentTintG = buffer.ReadLong
             CurrentTintB = buffer.ReadLong

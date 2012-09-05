@@ -97,11 +97,11 @@ End Sub
 
 Public Sub HandleKeyPresses(ByVal KeyAscii As Integer)
 Dim ChatText As String
-Dim Name As String
+Dim name As String
 Dim i As Long
 Dim n As Long
 Dim Command() As String
-Dim Buffer As clsBuffer
+Dim buffer As clsBuffer
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -143,13 +143,13 @@ Dim Buffer As clsBuffer
         ' Player message
         If Left$(ChatText, 3) = "/p " Then
             ChatText = Mid$(ChatText, 4, Len(ChatText) - 3)
-            Name = vbNullString
+            name = vbNullString
 
             ' Get the desired player from the user text
             For i = 1 To Len(ChatText)
 
                 If Mid$(ChatText, i, 1) <> Space(1) Then
-                    Name = Name & Mid$(ChatText, i, 1)
+                    name = name & Mid$(ChatText, i, 1)
                 Else
                     Exit For
                 End If
@@ -160,9 +160,9 @@ Dim Buffer As clsBuffer
             If Len(ChatText) - i > 0 Then
                 ChatText = Mid$(ChatText, i + 1, Len(ChatText) - i)
                 ' Send the message to the player
-                Call PlayerMsg(ChatText, Name)
+                Call PlayerMsg(ChatText, name)
             Else
-                Call AddText("Usage: /p playername (message)", AlertColor)
+                Call AddText("Usage: /p playername (message)", Red)
             End If
 
             MyText = vbNullString
@@ -175,29 +175,29 @@ Dim Buffer As clsBuffer
 
             Select Case Command(0)
                 Case "/help"
-                    Call AddText("Social Commands:", HelpColor)
-                    Call AddText("'msghere = Broadcast Message", HelpColor)
-                    Call AddText("-msghere = Emote Message", HelpColor)
-                    Call AddText("!namehere msghere = Player Message", HelpColor)
-                    Call AddText("Available Commands: /info, /who, /fps, /fpslock", HelpColor)
+                    Call AddText("Social Commands:", BrightBlue)
+                    Call AddText("'msghere = Broadcast Message", BrightBlue)
+                    Call AddText("-msghere = Emote Message", BrightBlue)
+                    Call AddText("!namehere msghere = Player Message", BrightBlue)
+                    Call AddText("Available Commands: /info, /who, /fps, /fpslock", BrightBlue)
                 Case "/info"
 
                     ' Checks to make sure we have more than one string in the array
                     If UBound(Command) < 1 Then
-                        AddText "Usage: /info (name)", AlertColor
+                        AddText "Usage: /info (name)", Red
                         GoTo Continue
                     End If
 
                     If IsNumeric(Command(1)) Then
-                        AddText "Usage: /info (name)", AlertColor
+                        AddText "Usage: /info (name)", Red
                         GoTo Continue
                     End If
 
-                    Set Buffer = New clsBuffer
-                    Buffer.WriteLong CPlayerInfoRequest
-                    Buffer.WriteString Command(1)
-                    SendData Buffer.ToArray()
-                    Set Buffer = Nothing
+                    Set buffer = New clsBuffer
+                    buffer.WriteLong CPlayerInfoRequest
+                    buffer.WriteString Command(1)
+                    SendData buffer.ToArray()
+                    Set buffer = Nothing
                     ' Whos Online
                 Case "/who"
                     SendWhosOnline
@@ -209,26 +209,26 @@ Dim Buffer As clsBuffer
                     FPS_Lock = Not FPS_Lock
                     ' Request stats
                 Case "/stats"
-                    Set Buffer = New clsBuffer
-                    Buffer.WriteLong CGetStats
-                    SendData Buffer.ToArray()
-                    Set Buffer = Nothing
+                    Set buffer = New clsBuffer
+                    buffer.WriteLong CGetStats
+                    SendData buffer.ToArray()
+                    Set buffer = Nothing
                     ' // Monitor Admin Commands //
                     ' Admin Help
                 Case "/admin"
-                    If GetPlayerAccess(MyIndex) < ADMIN_MONITOR Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankModerator Then GoTo Continue
                     frmMain.picAdmin.Visible = Not frmMain.picAdmin.Visible
                     ' Kicking a player
                 Case "/kick"
-                    If GetPlayerAccess(MyIndex) < ADMIN_MONITOR Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankModerator Then GoTo Continue
 
                     If UBound(Command) < 1 Then
-                        AddText "Usage: /kick (name)", AlertColor
+                        AddText "Usage: /kick (name)", Red
                         GoTo Continue
                     End If
 
                     If IsNumeric(Command(1)) Then
-                        AddText "Usage: /kick (name)", AlertColor
+                        AddText "Usage: /kick (name)", Red
                         GoTo Continue
                     End If
 
@@ -236,55 +236,55 @@ Dim Buffer As clsBuffer
                     ' // Mapper Admin Commands //
                     ' Location
                 Case "/loc"
-                    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankMapper Then GoTo Continue
 
                     BLoc = Not BLoc
                     ' Map Editor
                 Case "/editmap"
-                    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankMapper Then GoTo Continue
                     
                     SendRequestEditMap
                     ' Warping to a player
                 Case "/warpmeto"
-                    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankMapper Then GoTo Continue
 
                     If UBound(Command) < 1 Then
-                        AddText "Usage: /warpmeto (name)", AlertColor
+                        AddText "Usage: /warpmeto (name)", Red
                         GoTo Continue
                     End If
 
                     If IsNumeric(Command(1)) Then
-                        AddText "Usage: /warpmeto (name)", AlertColor
+                        AddText "Usage: /warpmeto (name)", Red
                         GoTo Continue
                     End If
 
                     WarpMeTo Command(1)
                     ' Warping a player to you
                 Case "/warptome"
-                    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankMapper Then GoTo Continue
 
                     If UBound(Command) < 1 Then
-                        AddText "Usage: /warptome (name)", AlertColor
+                        AddText "Usage: /warptome (name)", Red
                         GoTo Continue
                     End If
 
                     If IsNumeric(Command(1)) Then
-                        AddText "Usage: /warptome (name)", AlertColor
+                        AddText "Usage: /warptome (name)", Red
                         GoTo Continue
                     End If
 
                     WarpToMe Command(1)
                     ' Warping to a map
                 Case "/warpto"
-                    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankMapper Then GoTo Continue
 
                     If UBound(Command) < 1 Then
-                        AddText "Usage: /warpto (map #)", AlertColor
+                        AddText "Usage: /warpto (map #)", Red
                         GoTo Continue
                     End If
 
                     If Not IsNumeric(Command(1)) Then
-                        AddText "Usage: /warpto (map #)", AlertColor
+                        AddText "Usage: /warpto (map #)", Red
                         GoTo Continue
                     End If
 
@@ -299,50 +299,50 @@ Dim Buffer As clsBuffer
 
                     ' Setting sprite
                 Case "/setsprite"
-                    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankMapper Then GoTo Continue
 
                     If UBound(Command) < 1 Then
-                        AddText "Usage: /setsprite (sprite #)", AlertColor
+                        AddText "Usage: /setsprite (sprite #)", Red
                         GoTo Continue
                     End If
 
                     If Not IsNumeric(Command(1)) Then
-                        AddText "Usage: /setsprite (sprite #)", AlertColor
+                        AddText "Usage: /setsprite (sprite #)", Red
                         GoTo Continue
                     End If
 
                     SendSetSprite CLng(Command(1))
                     ' Map report
                 Case "/mapreport"
-                    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankMapper Then GoTo Continue
 
                     SendMapReport
                     ' Respawn request
                 Case "/respawn"
-                    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankMapper Then GoTo Continue
 
                     SendMapRespawn
                     ' MOTD change
                 Case "/motd"
-                    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankMapper Then GoTo Continue
 
                     If UBound(Command) < 1 Then
-                        AddText "Usage: /motd (new motd)", AlertColor
+                        AddText "Usage: /motd (new motd)", Red
                         GoTo Continue
                     End If
 
                     SendMOTDChange Right$(ChatText, Len(ChatText) - 5)
                     ' Check the ban list
                 Case "/banlist"
-                    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankMapper Then GoTo Continue
 
                     SendBanList
                     ' Banning a player
                 Case "/ban"
-                    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankMapper Then GoTo Continue
 
                     If UBound(Command) < 1 Then
-                        AddText "Usage: /ban (name)", AlertColor
+                        AddText "Usage: /ban (name)", Red
                         GoTo Continue
                     End If
 
@@ -350,61 +350,61 @@ Dim Buffer As clsBuffer
                     ' // Developer Admin Commands //
                     ' Editing item request
                 Case "/edititem"
-                    If GetPlayerAccess(MyIndex) < ADMIN_DEVELOPER Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankDeveloper Then GoTo Continue
 
                     SendRequestEditItem
                 ' Editing animation request
                 Case "/editanimation"
-                    If GetPlayerAccess(MyIndex) < ADMIN_DEVELOPER Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankDeveloper Then GoTo Continue
 
                     SendRequestEditAnimation
                     ' Editing npc request
                 Case "/editnpc"
-                    If GetPlayerAccess(MyIndex) < ADMIN_DEVELOPER Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankDeveloper Then GoTo Continue
 
                     SendRequestEditNpc
                 Case "/editresource"
-                    If GetPlayerAccess(MyIndex) < ADMIN_DEVELOPER Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankDeveloper Then GoTo Continue
 
                     SendRequestEditResource
                     ' Editing shop request
                 Case "/editshop"
-                    If GetPlayerAccess(MyIndex) < ADMIN_DEVELOPER Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankDeveloper Then GoTo Continue
 
                     SendRequestEditShop
                     ' Editing spell request
                 Case "/editspell"
-                    If GetPlayerAccess(MyIndex) < ADMIN_DEVELOPER Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankDeveloper Then GoTo Continue
 
                     SendRequestEditSpell
                     ' // Creator Admin Commands //
                     ' Giving another player access
                 Case "/setaccess"
-                    If GetPlayerAccess(MyIndex) < ADMIN_CREATOR Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankAdministrator Then GoTo Continue
 
                     If UBound(Command) < 2 Then
-                        AddText "Usage: /setaccess (name) (access)", AlertColor
+                        AddText "Usage: /setaccess (name) (access)", Red
                         GoTo Continue
                     End If
 
                     If IsNumeric(Command(1)) Or Not IsNumeric(Command(2)) Then
-                        AddText "Usage: /setaccess (name) (access)", AlertColor
+                        AddText "Usage: /setaccess (name) (access)", Red
                         GoTo Continue
                     End If
 
                     SendSetAccess Command(1), CLng(Command(2))
                     ' Ban destroy
                 Case "/destroybanlist"
-                    If GetPlayerAccess(MyIndex) < ADMIN_CREATOR Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankAdministrator Then GoTo Continue
 
                     SendBanDestroy
                     ' Packet debug mode
                 Case "/debug"
-                    If GetPlayerAccess(MyIndex) < ADMIN_CREATOR Then GoTo Continue
+                    If GetPlayerAccess(MyIndex) < RankAdministrator Then GoTo Continue
 
                     DEBUG_MODE = (Not DEBUG_MODE)
                 Case Else
-                    AddText "Not a valid command!", HelpColor
+                    AddText "Not a valid command!", BrightBlue
             End Select
 
             'continue label where we go instead of exiting the sub

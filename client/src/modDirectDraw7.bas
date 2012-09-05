@@ -61,7 +61,7 @@ Public Tex_Fade As DX8TextureRec
 Public NumTileSets As Long
 Public NumCharacters As Long
 Public NumPaperdolls As Long
-Public NumItems As Long
+Public numitems As Long
 Public NumResources As Long
 Public NumAnimations As Long
 Public NumSpellIcons As Long
@@ -333,7 +333,7 @@ Dim i As Long
         Tex_Tileset(i).Texture = 0
     Next
 
-    For i = 1 To NumItems
+    For i = 1 To numitems
         Tex_Item(i).Texture = 0
     Next
 
@@ -576,10 +576,10 @@ Dim i As Long
 
     With Map.Tile(x, y)
         For i = MapLayer.Ground To MapLayer.Mask2
-            If Autotile(x, y).Layer(i).renderState = RENDER_STATE_NORMAL Then
+            If Autotile(x, y).Layer(i).renderState = RenderNormal Then
                 ' Draw normally
                 RenderTexture Tex_Tileset(.Layer(i).Tileset), ConvertMapX(x * PIC_X), ConvertMapY(y * PIC_Y), .Layer(i).x * 32, .Layer(i).y * 32, 32, 32, 32, 32, -1
-            ElseIf Autotile(x, y).Layer(i).renderState = RENDER_STATE_AUTOTILE Then
+            ElseIf Autotile(x, y).Layer(i).renderState = RenderAutotile Then
                 ' Draw autotiles
                 DrawAutoTile i, ConvertMapX(x * PIC_X), ConvertMapY(y * PIC_Y), 1, x, y
                 DrawAutoTile i, ConvertMapX((x * PIC_X) + 16), ConvertMapY(y * PIC_Y), 2, x, y
@@ -607,10 +607,10 @@ Dim i As Long
 
     With Map.Tile(x, y)
         For i = MapLayer.Fringe To MapLayer.Fringe2
-            If Autotile(x, y).Layer(i).renderState = RENDER_STATE_NORMAL Then
+            If Autotile(x, y).Layer(i).renderState = RenderNormal Then
                 ' Draw normally
                 RenderTexture Tex_Tileset(.Layer(i).Tileset), ConvertMapX(x * PIC_X), ConvertMapY(y * PIC_Y), .Layer(i).x * 32, .Layer(i).y * 32, 32, 32, 32, 32, -1
-            ElseIf Autotile(x, y).Layer(i).renderState = RENDER_STATE_AUTOTILE Then
+            ElseIf Autotile(x, y).Layer(i).renderState = RenderAutotile Then
                 ' Draw autotiles
                 DrawAutoTile i, ConvertMapX(x * PIC_X), ConvertMapY(y * PIC_Y), 1, x, y
                 DrawAutoTile i, ConvertMapX((x * PIC_X) + 16), ConvertMapY(y * PIC_Y), 2, x, y
@@ -742,9 +742,9 @@ Dim lockindex As Long
     sRect.Right = sRect.Left + Width
     
     ' change x or y if locked
-    If AnimInstance(Index).LockType > TARGET_TYPE_NONE Then ' if <> none
+    If AnimInstance(Index).LockType > TargetNone Then ' if <> none
         ' is a player
-        If AnimInstance(Index).LockType = TARGET_TYPE_PLAYER Then
+        If AnimInstance(Index).LockType = TargetPlayer Then
             ' quick save the index
             lockindex = AnimInstance(Index).lockindex
             ' check if is ingame
@@ -756,7 +756,7 @@ Dim lockindex As Long
                     y = (GetPlayerY(lockindex) * PIC_Y) + 16 - (Height / 2) + Player(lockindex).yOffset
                 End If
             End If
-        ElseIf AnimInstance(Index).LockType = TARGET_TYPE_NPC Then
+        ElseIf AnimInstance(Index).LockType = TargetNPC Then
             ' quick save the index
             lockindex = AnimInstance(Index).lockindex
             ' check if NPC exists
@@ -831,7 +831,7 @@ Dim MaxFrames As Byte
     ' get the picture
     PicNum = Item(MapItem(itemnum).num).Pic
 
-    If PicNum < 1 Or PicNum > NumItems Then Exit Sub
+    If PicNum < 1 Or PicNum > numitems Then Exit Sub
 
     If Tex_Item(PicNum).Width > 64 Then ' has more than 1 frame
         With rec
@@ -1262,7 +1262,7 @@ Dim sRect As RECT, dRect As RECT, i As Long, num As String, n As Long, destRect 
             Case 1 ' inventory
                 If Len(Item(Hotbar(i).Slot).name) > 0 Then
                     If Item(Hotbar(i).Slot).Pic > 0 Then
-                        If Item(Hotbar(i).Slot).Pic <= NumItems Then
+                        If Item(Hotbar(i).Slot).Pic <= numitems Then
                             Direct3D_Device.Clear 0, ByVal 0, D3DCLEAR_TARGET, D3DColorRGBA(0, 0, 0, 255), 1#, 0
                             Direct3D_Device.BeginScene
                             RenderTextureByRects Tex_Item(Item(Hotbar(i).Slot).Pic), sRect, dRect
@@ -1349,13 +1349,13 @@ Dim attackspeed As Long
     Else
         ' If not attacking, walk normally
         Select Case GetPlayerDir(Index)
-            Case DIR_UP
+            Case DirectionUp
                 If (Player(Index).yOffset > 8) Then anim = Player(Index).Step
-            Case DIR_DOWN
+            Case DirectionDown
                 If (Player(Index).yOffset < -8) Then anim = Player(Index).Step
-            Case DIR_LEFT
+            Case DirectionLeft
                 If (Player(Index).xOffset > 8) Then anim = Player(Index).Step
-            Case DIR_RIGHT
+            Case DirectionRight
                 If (Player(Index).xOffset < -8) Then anim = Player(Index).Step
         End Select
     End If
@@ -1370,13 +1370,13 @@ Dim attackspeed As Long
 
     ' Set the left
     Select Case GetPlayerDir(Index)
-        Case DIR_UP
+        Case DirectionUp
             spritetop = 3
-        Case DIR_RIGHT
+        Case DirectionRight
             spritetop = 2
-        Case DIR_DOWN
+        Case DirectionDown
             spritetop = 0
-        Case DIR_LEFT
+        Case DirectionLeft
             spritetop = 1
     End Select
 
@@ -1445,13 +1445,13 @@ Dim attackspeed As Long
     Else
         ' If not attacking, walk normally
         Select Case MapNpc(MapNpcNum).Dir
-            Case DIR_UP
+            Case DirectionUp
                 If (MapNpc(MapNpcNum).yOffset > 8) Then anim = MapNpc(MapNpcNum).Step
-            Case DIR_DOWN
+            Case DirectionDown
                 If (MapNpc(MapNpcNum).yOffset < -8) Then anim = MapNpc(MapNpcNum).Step
-            Case DIR_LEFT
+            Case DirectionLeft
                 If (MapNpc(MapNpcNum).xOffset > 8) Then anim = MapNpc(MapNpcNum).Step
-            Case DIR_RIGHT
+            Case DirectionRight
                 If (MapNpc(MapNpcNum).xOffset < -8) Then anim = MapNpc(MapNpcNum).Step
         End Select
     End If
@@ -1466,13 +1466,13 @@ Dim attackspeed As Long
 
     ' Set the left
     Select Case MapNpc(MapNpcNum).Dir
-        Case DIR_UP
+        Case DirectionUp
             spritetop = 3
-        Case DIR_RIGHT
+        Case DirectionRight
             spritetop = 2
-        Case DIR_DOWN
+        Case DirectionDown
             spritetop = 0
-        Case DIR_LEFT
+        Case DirectionLeft
             spritetop = 1
     End Select
 
@@ -1621,7 +1621,7 @@ Public Sub DrawWeather()
 Dim color As Long, i As Long, SpriteLeft As Long
     For i = 1 To MAX_WEATHER_PARTICLES
         If WeatherParticle(i).InUse Then
-            If WeatherParticle(i).Type = WEATHER_TYPE_STORM Then
+            If WeatherParticle(i).Type = WeatherStorm Then
                 SpriteLeft = 0
             Else
                 SpriteLeft = WeatherParticle(i).Type - 1
@@ -1650,7 +1650,7 @@ Dim rec As RECT, rec_pos As RECT
         If MapItem(i).num > 0 Then
             itempic = Item(MapItem(i).num).Pic
 
-            If itempic < 1 Or itempic > NumItems Then Exit Sub
+            If itempic < 1 Or itempic > numitems Then Exit Sub
             MaxFrames = (Tex_Item(itempic).Width / 2) / 32 ' Work out how many frames there are. /2 because of inventory icons as well as ingame
 
             If MapItem(i).Frame < MaxFrames - 1 Then
@@ -1668,7 +1668,7 @@ Dim rec As RECT, rec_pos As RECT
         If itemnum > 0 And itemnum <= MAX_ITEMS Then
             itempic = Item(itemnum).Pic
 
-            If itempic > 0 And itempic <= NumItems Then
+            If itempic > 0 And itempic <= numitems Then
                 If Tex_Item(itempic).Width > 64 Then
                     MaxFrames = (Tex_Item(itempic).Width / 2) / 32 ' Work out how many frames there are. /2 because of inventory icons as well as ingame
 
@@ -1777,7 +1777,7 @@ Dim rec As RECT, rec_pos As RECT, srcRect As D3DRECT, destRect As D3DRECT
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
-    If NumItems = 0 Then Exit Sub
+    If numitems = 0 Then Exit Sub
     
     'frmMain.picCharacter.Cls
     For i = 1 To Equipment.Equipment_Count - 1
@@ -1850,7 +1850,7 @@ Dim tmpItem As Long, amountModifier As Long
                     tmpItem = GetPlayerInvItemNum(MyIndex, TradeYourOffer(x).num)
                     If TradeYourOffer(x).num = i Then
                         ' check if currency
-                        If Not Item(tmpItem).Type = ITEM_TYPE_CURRENCY Then
+                        If Not Item(tmpItem).Type = ItemCurrency Then
                             ' normal item, exit out
                             GoTo NextLoop
                         Else
@@ -1866,7 +1866,7 @@ Dim tmpItem As Long, amountModifier As Long
                 Next
             End If
 
-            If itempic > 0 And itempic <= NumItems Then
+            If itempic > 0 And itempic <= numitems Then
                 If Tex_Item(itempic).Width <= 64 Then ' more than 1 frame is handled by anim sub
 
                     With rec
@@ -1960,7 +1960,7 @@ Dim colour As Long
         If itemnum > 0 And itemnum <= MAX_ITEMS Then
             itempic = Item(itemnum).Pic
 
-            If itempic > 0 And itempic <= NumItems Then
+            If itempic > 0 And itempic <= numitems Then
                 With rec
                     .Top = 0
                     .Bottom = 32
@@ -2025,7 +2025,7 @@ Dim colour As Long
         If itemnum > 0 And itemnum <= MAX_ITEMS Then
             itempic = Item(itemnum).Pic
 
-            If itempic > 0 And itempic <= NumItems Then
+            If itempic > 0 And itempic <= numitems Then
                 With rec
                     .Top = 0
                     .Bottom = 32
@@ -2177,7 +2177,7 @@ Dim colour As Long
         itemnum = Shop(InShop).TradeItem(i).Item 'GetPlayerInvItemNum(MyIndex, i)
         If itemnum > 0 And itemnum <= MAX_ITEMS Then
             itempic = Item(itemnum).Pic
-            If itempic > 0 And itempic <= NumItems Then
+            If itempic > 0 And itempic <= numitems Then
             
                 With rec
                     .Top = 0
@@ -2688,7 +2688,7 @@ Dim dRect As RECT
 
     itemnum = Item(frmEditor_Map.scrlMapItem.value).Pic
 
-    If itemnum < 1 Or itemnum > NumItems Then
+    If itemnum < 1 Or itemnum > numitems Then
         frmEditor_Map.picMapItem.Cls
         Exit Sub
     End If
@@ -2732,7 +2732,7 @@ Dim dRect As RECT
 
     itemnum = Item(frmEditor_Map.scrlMapKey.value).Pic
 
-    If itemnum < 1 Or itemnum > NumItems Then
+    If itemnum < 1 Or itemnum > numitems Then
         frmEditor_Map.picMapKey.Cls
         Exit Sub
     End If
@@ -2769,7 +2769,7 @@ errorhandler:
     Exit Sub
 End Sub
 
-Public Sub EditorItem_DrawItem()
+Public Sub GEditorItem_DrawItem()
 Dim itemnum As Long
 Dim sRect As RECT, destRect As D3DRECT
 Dim dRect As RECT
@@ -2779,7 +2779,7 @@ Dim dRect As RECT
 
     itemnum = frmEditor_Item.scrlPic.value
 
-    If itemnum < 1 Or itemnum > NumItems Then
+    If itemnum < 1 Or itemnum > numitems Then
         frmEditor_Item.picItem.Cls
         Exit Sub
     End If
@@ -2809,12 +2809,12 @@ Dim dRect As RECT
     ' Error handler
     Exit Sub
 errorhandler:
-    HandleError "EditorItem_DrawItem", "modGraphics", Err.Number, Err.Description, Err.Source, Err.HelpContext
+    HandleError "GEditorItem_DrawItem", "modGraphics", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
 End Sub
 
-Public Sub EditorItem_DrawPaperdoll()
+Public Sub GEditorItem_DrawPaperdoll()
 Dim Sprite As Long, srcRect As D3DRECT, destRect As D3DRECT
 Dim sRect As RECT
 Dim dRect As RECT
@@ -2856,12 +2856,12 @@ Dim dRect As RECT
     ' Error handler
     Exit Sub
 errorhandler:
-    HandleError "EditorItem_DrawPaperdoll", "modGraphics", Err.Number, Err.Description, Err.Source, Err.HelpContext
+    HandleError "GEditorItem_DrawPaperdoll", "modGraphics", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
 End Sub
 
-Public Sub EditorSpell_DrawIcon()
+Public Sub GEditorSpell_DrawIcon()
 Dim iconnum As Long, destRect As D3DRECT
 Dim sRect As RECT
 Dim dRect As RECT
@@ -2900,7 +2900,7 @@ Dim dRect As RECT
     ' Error handler
     Exit Sub
 errorhandler:
-    HandleError "EditorSpell_DrawIcon", "modGraphics", Err.Number, Err.Description, Err.Source, Err.HelpContext
+    HandleError "GEditorSpell_DrawIcon", "modGraphics", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
 End Sub
@@ -2992,7 +2992,7 @@ errorhandler:
     Exit Sub
 End Sub
 
-Public Sub EditorNpc_DrawSprite()
+Public Sub GEditorNPC_DrawSprite()
 Dim Sprite As Long, destRect As D3DRECT
 Dim sRect As RECT
 Dim dRect As RECT
@@ -3033,12 +3033,12 @@ Dim dRect As RECT
     ' Error handler
     Exit Sub
 errorhandler:
-    HandleError "EditorNpc_DrawSprite", "modGraphics", Err.Number, Err.Description, Err.Source, Err.HelpContext
+    HandleError "GEditorNPC_DrawSprite", "modGraphics", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
 End Sub
 
-Public Sub EditorResource_DrawSprite()
+Public Sub GEditorResource_DrawSprite()
 Dim Sprite As Long
 Dim sRect As RECT, destRect As D3DRECT, srcRect As D3DRECT
 Dim dRect As RECT
@@ -3120,7 +3120,7 @@ Dim dRect As RECT
     ' Error handler
     Exit Sub
 errorhandler:
-    HandleError "EditorResource_DrawSprite", "modGraphics", Err.Number, Err.Description, Err.Source, Err.HelpContext
+    HandleError "GEditorResource_DrawSprite", "modGraphics", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
 End Sub
@@ -3167,7 +3167,7 @@ Dim rec_pos As RECT, srcRect As D3DRECT
             Next
         
             ' Blit out the items
-            If NumItems > 0 Then
+            If numitems > 0 Then
                 For i = MAX_MAP_ITEMS To 1 Step -1
                     If MapItem(i).num > 0 Then
                         Call DrawItem(i)
@@ -3291,9 +3291,9 @@ Dim rec_pos As RECT, srcRect As D3DRECT
             
             ' Draw the target icon
             If myTarget > 0 Then
-                If myTargetType = TARGET_TYPE_PLAYER Then
+                If myTargetType = TargetPlayer Then
                     DrawTarget (Player(myTarget).x * 32) + Player(myTarget).xOffset, (Player(myTarget).y * 32) + Player(myTarget).yOffset
-                ElseIf myTargetType = TARGET_TYPE_NPC Then
+                ElseIf myTargetType = TargetNPC Then
                     DrawTarget (MapNpc(myTarget).x * 32) + MapNpc(myTarget).xOffset, (MapNpc(myTarget).y * 32) + MapNpc(myTarget).yOffset
                 End If
             End If
@@ -3303,10 +3303,10 @@ Dim rec_pos As RECT, srcRect As D3DRECT
                 If IsPlaying(i) Then
                     If Player(i).Map = Player(MyIndex).Map Then
                         If CurX = Player(i).x And CurY = Player(i).y Then
-                            If myTargetType = TARGET_TYPE_PLAYER And myTarget = i Then
+                            If myTargetType = TargetPlayer And myTarget = i Then
                                 ' dont render lol
                             Else
-                                DrawHover TARGET_TYPE_PLAYER, i, (Player(i).x * 32) + Player(i).xOffset, (Player(i).y * 32) + Player(i).yOffset
+                                DrawHover TargetPlayer, i, (Player(i).x * 32) + Player(i).xOffset, (Player(i).y * 32) + Player(i).yOffset
                             End If
                         End If
                     End If
@@ -3315,10 +3315,10 @@ Dim rec_pos As RECT, srcRect As D3DRECT
             For i = 1 To Npc_HighIndex
                 If MapNpc(i).num > 0 Then
                     If CurX = MapNpc(i).x And CurY = MapNpc(i).y Then
-                        If myTargetType = TARGET_TYPE_NPC And myTarget = i Then
+                        If myTargetType = TargetNPC And myTarget = i Then
                             ' dont render lol
                         Else
-                            DrawHover TARGET_TYPE_NPC, i, (MapNpc(i).x * 32) + MapNpc(i).xOffset, (MapNpc(i).y * 32) + MapNpc(i).yOffset
+                            DrawHover TargetNPC, i, (MapNpc(i).x * 32) + MapNpc(i).xOffset, (MapNpc(i).y * 32) + MapNpc(i).yOffset
                         End If
                     End If
                 End If
@@ -3707,7 +3707,7 @@ Dim Sprite As Long, colour As Long
             
                 Sprite = Item(itemnum).Pic
                 
-                If Sprite <= 0 Or Sprite > NumItems Then Exit Sub
+                If Sprite <= 0 Or Sprite > numitems Then Exit Sub
             
                 With sRect
                     .Top = 0
@@ -4195,25 +4195,25 @@ Public Sub DrawEvent(id As Long)
             End If
             
             Select Case Map.MapEvents(id).Dir
-                Case DIR_UP
+                Case DirectionUp
                     If (Map.MapEvents(id).yOffset > 8) Then anim = Map.MapEvents(id).Step
-                Case DIR_DOWN
+                Case DirectionDown
                     If (Map.MapEvents(id).yOffset < -8) Then anim = Map.MapEvents(id).Step
-                Case DIR_LEFT
+                Case DirectionLeft
                     If (Map.MapEvents(id).xOffset > 8) Then anim = Map.MapEvents(id).Step
-                Case DIR_RIGHT
+                Case DirectionRight
                     If (Map.MapEvents(id).xOffset < -8) Then anim = Map.MapEvents(id).Step
             End Select
             
             ' Set the left
             Select Case Map.MapEvents(id).ShowDir
-                Case DIR_UP
+                Case DirectionUp
                     spritetop = 3
-                Case DIR_RIGHT
+                Case DirectionRight
                     spritetop = 2
-                Case DIR_DOWN
+                Case DirectionDown
                     spritetop = 0
-                Case DIR_LEFT
+                Case DirectionLeft
                     spritetop = 1
             End Select
             
@@ -4334,8 +4334,8 @@ Public Sub DrawGDI()
     End If
     
     If frmEditor_Item.Visible Then
-        EditorItem_DrawItem
-        EditorItem_DrawPaperdoll
+        GEditorItem_DrawItem
+        GEditorItem_DrawPaperdoll
     End If
     
     If frmEditor_Map.Visible Then
@@ -4345,15 +4345,15 @@ Public Sub DrawGDI()
     End If
     
     If frmEditor_NPC.Visible Then
-        EditorNpc_DrawSprite
+        GEditorNPC_DrawSprite
     End If
     
     If frmEditor_Resource.Visible Then
-        EditorResource_DrawSprite
+        GEditorResource_DrawSprite
     End If
     
     If frmEditor_Spell.Visible Then
-        EditorSpell_DrawIcon
+        GEditorSpell_DrawIcon
     End If
     
     If frmEditor_Events.Visible Then
@@ -4551,29 +4551,29 @@ Dim quarterNum As Long
     With Map.Tile(x, y)
         ' check if the tile can be rendered
         If .Layer(layerNum).Tileset <= 0 Or .Layer(layerNum).Tileset > NumTileSets Then
-            Autotile(x, y).Layer(layerNum).renderState = RENDER_STATE_NONE
+            Autotile(x, y).Layer(layerNum).renderState = RenderNone
             Exit Sub
         End If
         
         ' check if it's a key - hide mask if key is closed
         If layerNum = MapLayer.Mask Then
-            If .Type = TILE_TYPE_KEY Then
+            If .Type = TileKey Then
                 If TempTile(x, y).DoorOpen = NO Then
-                    Autotile(x, y).Layer(layerNum).renderState = RENDER_STATE_NONE
+                    Autotile(x, y).Layer(layerNum).renderState = RenderNone
                     Exit Sub
                 Else
-                    Autotile(x, y).Layer(layerNum).renderState = RENDER_STATE_NORMAL
+                    Autotile(x, y).Layer(layerNum).renderState = RenderNormal
                     Exit Sub
                 End If
             End If
         End If
         
         ' check if it needs to be rendered as an autotile
-        If .Autotile(layerNum) = AUTOTILE_NONE Or .Autotile(layerNum) = AUTOTILE_FAKE Then
+        If .Autotile(layerNum) = ATNone Or .Autotile(layerNum) = ATFake Then
             ' default to... default
-            Autotile(x, y).Layer(layerNum).renderState = RENDER_STATE_NORMAL
+            Autotile(x, y).Layer(layerNum).renderState = RenderNormal
         Else
-            Autotile(x, y).Layer(layerNum).renderState = RENDER_STATE_AUTOTILE
+            Autotile(x, y).Layer(layerNum).renderState = RenderAutotile
             ' cache tileset positioning
             For quarterNum = 1 To 4
                 Autotile(x, y).Layer(layerNum).srcX(quarterNum) = (Map.Tile(x, y).Layer(layerNum).x * 32) + Autotile(x, y).Layer(layerNum).QuarterTile(quarterNum).x
@@ -4600,7 +4600,7 @@ Public Sub CalculateAutotile(ByVal x As Long, ByVal y As Long, ByVal layerNum As
     Select Case Map.Tile(x, y).Autotile(layerNum)
     
         ' Normal or animated - same difference
-        Case AUTOTILE_NORMAL, AUTOTILE_ANIM
+        Case ATNormal, ATAnim
             ' North West Quarter
             CalculateNW_Normal layerNum, x, y
             
@@ -4614,7 +4614,7 @@ Public Sub CalculateAutotile(ByVal x As Long, ByVal y As Long, ByVal layerNum As
             CalculateSE_Normal layerNum, x, y
             
         ' Cliff
-        Case AUTOTILE_CLIFF
+        Case ATCliff
             ' North West Quarter
             CalculateNW_Cliff layerNum, x, y
             
@@ -4628,7 +4628,7 @@ Public Sub CalculateAutotile(ByVal x As Long, ByVal y As Long, ByVal layerNum As
             CalculateSE_Cliff layerNum, x, y
             
         ' Waterfalls
-        Case AUTOTILE_WATERFALL
+        Case ATWaterfall
             ' North West Quarter
             CalculateNW_Waterfall layerNum, x, y
             
@@ -4662,27 +4662,27 @@ Dim situation As Byte
     If checkTileMatch(layerNum, x, y, x - 1, y) Then tmpTile(3) = True
     
     ' Calculate Situation - Inner
-    If Not tmpTile(2) And Not tmpTile(3) Then situation = AUTO_INNER
+    If Not tmpTile(2) And Not tmpTile(3) Then situation = ATInner
     ' Horizontal
-    If Not tmpTile(2) And tmpTile(3) Then situation = AUTO_HORIZONTAL
+    If Not tmpTile(2) And tmpTile(3) Then situation = ATHorizontal
     ' Vertical
-    If tmpTile(2) And Not tmpTile(3) Then situation = AUTO_VERTICAL
+    If tmpTile(2) And Not tmpTile(3) Then situation = ATVertical
     ' Outer
-    If Not tmpTile(1) And tmpTile(2) And tmpTile(3) Then situation = AUTO_OUTER
+    If Not tmpTile(1) And tmpTile(2) And tmpTile(3) Then situation = ATOuter
     ' Fill
-    If tmpTile(1) And tmpTile(2) And tmpTile(3) Then situation = AUTO_FILL
+    If tmpTile(1) And tmpTile(2) And tmpTile(3) Then situation = ATFill
     
     ' Actually place the subtile
     Select Case situation
-        Case AUTO_INNER
+        Case ATInner
             placeAutotile layerNum, x, y, 1, "e"
-        Case AUTO_OUTER
+        Case ATOuter
             placeAutotile layerNum, x, y, 1, "a"
-        Case AUTO_HORIZONTAL
+        Case ATHorizontal
             placeAutotile layerNum, x, y, 1, "i"
-        Case AUTO_VERTICAL
+        Case ATVertical
             placeAutotile layerNum, x, y, 1, "m"
-        Case AUTO_FILL
+        Case ATFill
             placeAutotile layerNum, x, y, 1, "q"
     End Select
 End Sub
@@ -4701,27 +4701,27 @@ Dim situation As Byte
     If checkTileMatch(layerNum, x, y, x + 1, y) Then tmpTile(3) = True
     
     ' Calculate Situation - Inner
-    If Not tmpTile(1) And Not tmpTile(3) Then situation = AUTO_INNER
+    If Not tmpTile(1) And Not tmpTile(3) Then situation = ATInner
     ' Horizontal
-    If Not tmpTile(1) And tmpTile(3) Then situation = AUTO_HORIZONTAL
+    If Not tmpTile(1) And tmpTile(3) Then situation = ATHorizontal
     ' Vertical
-    If tmpTile(1) And Not tmpTile(3) Then situation = AUTO_VERTICAL
+    If tmpTile(1) And Not tmpTile(3) Then situation = ATVertical
     ' Outer
-    If tmpTile(1) And Not tmpTile(2) And tmpTile(3) Then situation = AUTO_OUTER
+    If tmpTile(1) And Not tmpTile(2) And tmpTile(3) Then situation = ATOuter
     ' Fill
-    If tmpTile(1) And tmpTile(2) And tmpTile(3) Then situation = AUTO_FILL
+    If tmpTile(1) And tmpTile(2) And tmpTile(3) Then situation = ATFill
     
     ' Actually place the subtile
     Select Case situation
-        Case AUTO_INNER
+        Case ATInner
             placeAutotile layerNum, x, y, 2, "j"
-        Case AUTO_OUTER
+        Case ATOuter
             placeAutotile layerNum, x, y, 2, "b"
-        Case AUTO_HORIZONTAL
+        Case ATHorizontal
             placeAutotile layerNum, x, y, 2, "f"
-        Case AUTO_VERTICAL
+        Case ATVertical
             placeAutotile layerNum, x, y, 2, "r"
-        Case AUTO_FILL
+        Case ATFill
             placeAutotile layerNum, x, y, 2, "n"
     End Select
 End Sub
@@ -4740,27 +4740,27 @@ Dim situation As Byte
     If checkTileMatch(layerNum, x, y, x, y + 1) Then tmpTile(3) = True
     
     ' Calculate Situation - Inner
-    If Not tmpTile(1) And Not tmpTile(3) Then situation = AUTO_INNER
+    If Not tmpTile(1) And Not tmpTile(3) Then situation = ATInner
     ' Horizontal
-    If tmpTile(1) And Not tmpTile(3) Then situation = AUTO_HORIZONTAL
+    If tmpTile(1) And Not tmpTile(3) Then situation = ATHorizontal
     ' Vertical
-    If Not tmpTile(1) And tmpTile(3) Then situation = AUTO_VERTICAL
+    If Not tmpTile(1) And tmpTile(3) Then situation = ATVertical
     ' Outer
-    If tmpTile(1) And Not tmpTile(2) And tmpTile(3) Then situation = AUTO_OUTER
+    If tmpTile(1) And Not tmpTile(2) And tmpTile(3) Then situation = ATOuter
     ' Fill
-    If tmpTile(1) And tmpTile(2) And tmpTile(3) Then situation = AUTO_FILL
+    If tmpTile(1) And tmpTile(2) And tmpTile(3) Then situation = ATFill
     
     ' Actually place the subtile
     Select Case situation
-        Case AUTO_INNER
+        Case ATInner
             placeAutotile layerNum, x, y, 3, "o"
-        Case AUTO_OUTER
+        Case ATOuter
             placeAutotile layerNum, x, y, 3, "c"
-        Case AUTO_HORIZONTAL
+        Case ATHorizontal
             placeAutotile layerNum, x, y, 3, "s"
-        Case AUTO_VERTICAL
+        Case ATVertical
             placeAutotile layerNum, x, y, 3, "g"
-        Case AUTO_FILL
+        Case ATFill
             placeAutotile layerNum, x, y, 3, "k"
     End Select
 End Sub
@@ -4779,27 +4779,27 @@ Dim situation As Byte
     If checkTileMatch(layerNum, x, y, x + 1, y) Then tmpTile(3) = True
     
     ' Calculate Situation - Inner
-    If Not tmpTile(1) And Not tmpTile(3) Then situation = AUTO_INNER
+    If Not tmpTile(1) And Not tmpTile(3) Then situation = ATInner
     ' Horizontal
-    If Not tmpTile(1) And tmpTile(3) Then situation = AUTO_HORIZONTAL
+    If Not tmpTile(1) And tmpTile(3) Then situation = ATHorizontal
     ' Vertical
-    If tmpTile(1) And Not tmpTile(3) Then situation = AUTO_VERTICAL
+    If tmpTile(1) And Not tmpTile(3) Then situation = ATVertical
     ' Outer
-    If tmpTile(1) And Not tmpTile(2) And tmpTile(3) Then situation = AUTO_OUTER
+    If tmpTile(1) And Not tmpTile(2) And tmpTile(3) Then situation = ATOuter
     ' Fill
-    If tmpTile(1) And tmpTile(2) And tmpTile(3) Then situation = AUTO_FILL
+    If tmpTile(1) And tmpTile(2) And tmpTile(3) Then situation = ATFill
     
     ' Actually place the subtile
     Select Case situation
-        Case AUTO_INNER
+        Case ATInner
             placeAutotile layerNum, x, y, 4, "t"
-        Case AUTO_OUTER
+        Case ATOuter
             placeAutotile layerNum, x, y, 4, "d"
-        Case AUTO_HORIZONTAL
+        Case ATHorizontal
             placeAutotile layerNum, x, y, 4, "p"
-        Case AUTO_VERTICAL
+        Case ATVertical
             placeAutotile layerNum, x, y, 4, "l"
-        Case AUTO_FILL
+        Case ATFill
             placeAutotile layerNum, x, y, 4, "h"
     End Select
 End Sub
@@ -4884,23 +4884,23 @@ Dim situation As Byte
     If checkTileMatch(layerNum, x, y, x - 1, y) Then tmpTile(3) = True
     
     ' Calculate Situation - Horizontal
-    If Not tmpTile(2) And tmpTile(3) Then situation = AUTO_HORIZONTAL
+    If Not tmpTile(2) And tmpTile(3) Then situation = ATHorizontal
     ' Vertical
-    If tmpTile(2) And Not tmpTile(3) Then situation = AUTO_VERTICAL
+    If tmpTile(2) And Not tmpTile(3) Then situation = ATVertical
     ' Fill
-    If tmpTile(1) And tmpTile(2) And tmpTile(3) Then situation = AUTO_FILL
+    If tmpTile(1) And tmpTile(2) And tmpTile(3) Then situation = ATFill
     ' Inner
-    If Not tmpTile(2) And Not tmpTile(3) Then situation = AUTO_INNER
+    If Not tmpTile(2) And Not tmpTile(3) Then situation = ATInner
     
     ' Actually place the subtile
     Select Case situation
-        Case AUTO_INNER
+        Case ATInner
             placeAutotile layerNum, x, y, 1, "e"
-        Case AUTO_HORIZONTAL
+        Case ATHorizontal
             placeAutotile layerNum, x, y, 1, "i"
-        Case AUTO_VERTICAL
+        Case ATVertical
             placeAutotile layerNum, x, y, 1, "m"
-        Case AUTO_FILL
+        Case ATFill
             placeAutotile layerNum, x, y, 1, "q"
     End Select
 End Sub
@@ -4919,23 +4919,23 @@ Dim situation As Byte
     If checkTileMatch(layerNum, x, y, x + 1, y) Then tmpTile(3) = True
     
     ' Calculate Situation - Horizontal
-    If Not tmpTile(1) And tmpTile(3) Then situation = AUTO_HORIZONTAL
+    If Not tmpTile(1) And tmpTile(3) Then situation = ATHorizontal
     ' Vertical
-    If tmpTile(1) And Not tmpTile(3) Then situation = AUTO_VERTICAL
+    If tmpTile(1) And Not tmpTile(3) Then situation = ATVertical
     ' Fill
-    If tmpTile(1) And tmpTile(2) And tmpTile(3) Then situation = AUTO_FILL
+    If tmpTile(1) And tmpTile(2) And tmpTile(3) Then situation = ATFill
     ' Inner
-    If Not tmpTile(1) And Not tmpTile(3) Then situation = AUTO_INNER
+    If Not tmpTile(1) And Not tmpTile(3) Then situation = ATInner
     
     ' Actually place the subtile
     Select Case situation
-        Case AUTO_INNER
+        Case ATInner
             placeAutotile layerNum, x, y, 2, "j"
-        Case AUTO_HORIZONTAL
+        Case ATHorizontal
             placeAutotile layerNum, x, y, 2, "f"
-        Case AUTO_VERTICAL
+        Case ATVertical
             placeAutotile layerNum, x, y, 2, "r"
-        Case AUTO_FILL
+        Case ATFill
             placeAutotile layerNum, x, y, 2, "n"
     End Select
 End Sub
@@ -4954,23 +4954,23 @@ Dim situation As Byte
     If checkTileMatch(layerNum, x, y, x, y + 1) Then tmpTile(3) = True
     
     ' Calculate Situation - Horizontal
-    If tmpTile(1) And Not tmpTile(3) Then situation = AUTO_HORIZONTAL
+    If tmpTile(1) And Not tmpTile(3) Then situation = ATHorizontal
     ' Vertical
-    If Not tmpTile(1) And tmpTile(3) Then situation = AUTO_VERTICAL
+    If Not tmpTile(1) And tmpTile(3) Then situation = ATVertical
     ' Fill
-    If tmpTile(1) And tmpTile(2) And tmpTile(3) Then situation = AUTO_FILL
+    If tmpTile(1) And tmpTile(2) And tmpTile(3) Then situation = ATFill
     ' Inner
-    If Not tmpTile(1) And Not tmpTile(3) Then situation = AUTO_INNER
+    If Not tmpTile(1) And Not tmpTile(3) Then situation = ATInner
     
     ' Actually place the subtile
     Select Case situation
-        Case AUTO_INNER
+        Case ATInner
             placeAutotile layerNum, x, y, 3, "o"
-        Case AUTO_HORIZONTAL
+        Case ATHorizontal
             placeAutotile layerNum, x, y, 3, "s"
-        Case AUTO_VERTICAL
+        Case ATVertical
             placeAutotile layerNum, x, y, 3, "g"
-        Case AUTO_FILL
+        Case ATFill
             placeAutotile layerNum, x, y, 3, "k"
     End Select
 End Sub
@@ -4989,23 +4989,23 @@ Dim situation As Byte
     If checkTileMatch(layerNum, x, y, x + 1, y) Then tmpTile(3) = True
     
     ' Calculate Situation -  Horizontal
-    If Not tmpTile(1) And tmpTile(3) Then situation = AUTO_HORIZONTAL
+    If Not tmpTile(1) And tmpTile(3) Then situation = ATHorizontal
     ' Vertical
-    If tmpTile(1) And Not tmpTile(3) Then situation = AUTO_VERTICAL
+    If tmpTile(1) And Not tmpTile(3) Then situation = ATVertical
     ' Fill
-    If tmpTile(1) And tmpTile(2) And tmpTile(3) Then situation = AUTO_FILL
+    If tmpTile(1) And tmpTile(2) And tmpTile(3) Then situation = ATFill
     ' Inner
-    If Not tmpTile(1) And Not tmpTile(3) Then situation = AUTO_INNER
+    If Not tmpTile(1) And Not tmpTile(3) Then situation = ATInner
     
     ' Actually place the subtile
     Select Case situation
-        Case AUTO_INNER
+        Case ATInner
             placeAutotile layerNum, x, y, 4, "t"
-        Case AUTO_HORIZONTAL
+        Case ATHorizontal
             placeAutotile layerNum, x, y, 4, "p"
-        Case AUTO_VERTICAL
+        Case ATVertical
             placeAutotile layerNum, x, y, 4, "l"
-        Case AUTO_FILL
+        Case ATFill
             placeAutotile layerNum, x, y, 4, "h"
     End Select
 End Sub
@@ -5021,7 +5021,7 @@ Public Function checkTileMatch(ByVal layerNum As Long, ByVal x1 As Long, ByVal y
     End If
     
     ' fakes ALWAYS return true
-    If Map.Tile(x2, y2).Autotile(layerNum) = AUTOTILE_FAKE Then
+    If Map.Tile(x2, y2).Autotile(layerNum) = ATFake Then
         checkTileMatch = True
         Exit Function
     End If
@@ -5055,11 +5055,11 @@ Dim yOffset As Long, xOffset As Long
 
     ' calculate the offset
     Select Case Map.Tile(x, y).Autotile(layerNum)
-        Case AUTOTILE_WATERFALL
+        Case ATWaterfall
             yOffset = (waterfallFrame - 1) * 32
-        Case AUTOTILE_ANIM
+        Case ATAnim
             xOffset = autoTileFrame * 64
-        Case AUTOTILE_CLIFF
+        Case ATCliff
             yOffset = -32
     End Select
     

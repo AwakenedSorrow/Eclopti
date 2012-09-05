@@ -256,7 +256,7 @@ Sub AddChar(ByVal index As Long, ByVal Name As String, ByVal Sex As Byte, ByVal 
         Player(index).Sex = Sex
         Player(index).Class = ClassNum
         
-        If Player(index).Sex = SEX_MALE Then
+        If Player(index).Sex = Male Then
             Player(index).Sprite = Class(ClassNum).MaleSprite(Sprite)
         Else
             Player(index).Sprite = Class(ClassNum).FemaleSprite(Sprite)
@@ -268,11 +268,11 @@ Sub AddChar(ByVal index As Long, ByVal Name As String, ByVal Sex As Byte, ByVal 
             Player(index).stat(n) = Class(ClassNum).stat(n)
         Next n
 
-        Player(index).Dir = DIR_DOWN
+        Player(index).Dir = DirectionDown
         Player(index).Map = START_MAP
         Player(index).x = START_X
         Player(index).y = START_Y
-        Player(index).Dir = DIR_DOWN
+        Player(index).Dir = DirectionDown
         Player(index).Vital(Vitals.HP) = GetPlayerMaxVital(index, Vitals.HP)
         Player(index).Vital(Vitals.MP) = GetPlayerMaxVital(index, Vitals.MP)
         
@@ -377,7 +377,7 @@ Sub ClearPlayer(ByVal index As Long)
     Dim i As Long
     
     Call ZeroMemory(ByVal VarPtr(TempPlayer(index)), LenB(TempPlayer(index)))
-    Set TempPlayer(index).Buffer = New clsBuffer
+    Set TempPlayer(index).buffer = New clsBuffer
     
     Call ZeroMemory(ByVal VarPtr(Player(index)), LenB(Player(index)))
     Player(index).Login = vbNullString

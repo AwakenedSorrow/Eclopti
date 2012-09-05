@@ -323,11 +323,11 @@ Dim npcNum As Long
     npcNum = MapNpc(Index).num
 
     Select Case Npc(npcNum).Behaviour
-        Case NPC_BEHAVIOUR_ATTACKONSIGHT
+        Case AIAttackOnSight
             color = BrightRed
-        Case NPC_BEHAVIOUR_ATTACKWHENATTACKED
+        Case AIAttackWhenAttacked
             color = Yellow
-        Case NPC_BEHAVIOUR_GUARD
+        Case AIAssist
             color = Grey
         Case Else
             color = BrightGreen
@@ -371,35 +371,35 @@ Public Function DrawMapAttributes()
                         tx = ((ConvertMapX(x * PIC_X)) - 4) + (PIC_X * 0.5)
                         ty = ((ConvertMapY(y * PIC_Y)) - 7) + (PIC_Y * 0.5)
                         Select Case .Type
-                            Case TILE_TYPE_BLOCKED
+                            Case TileBlocked
                                 RenderText Font_Default, "B", tx, ty, BrightRed, 0
-                            Case TILE_TYPE_WARP
+                            Case TileWarp
                                 RenderText Font_Default, "W", tx, ty, BrightBlue, 0
-                            Case TILE_TYPE_ITEM
+                            Case TileItem
                                 RenderText Font_Default, "I", tx, ty, White, 0
-                            Case TILE_TYPE_NPCAVOID
+                            Case TileNPCAvoid
                                 RenderText Font_Default, "N", tx, ty, White, 0
-                            Case TILE_TYPE_KEY
+                            Case TileKey
                                 RenderText Font_Default, "K", tx, ty, White, 0
-                            Case TILE_TYPE_KEYOPEN
+                            Case TileKeyOPEN
                                 RenderText Font_Default, "O", tx, ty, White, 0
-                            Case TILE_TYPE_RESOURCE
+                            Case TileResource
                                 RenderText Font_Default, "B", tx, ty, Green, 0
-                            Case TILE_TYPE_DOOR
+                            Case TileDoor
                                 RenderText Font_Default, "D", tx, ty, Brown, 0
-                            Case TILE_TYPE_NPCSPAWN
+                            Case TileNPCSpawn
                                 RenderText Font_Default, "S", tx, ty, Yellow, 0
-                            Case TILE_TYPE_SHOP
+                            Case TileShop
                                 RenderText Font_Default, "S", tx, ty, BrightBlue, 0
-                            Case TILE_TYPE_BANK
+                            Case TileBank
                                 RenderText Font_Default, "B", tx, ty, Blue, 0
-                            Case TILE_TYPE_HEAL
+                            Case TileHeal
                                 RenderText Font_Default, "H", tx, ty, BrightGreen, 0
-                            Case TILE_TYPE_TRAP
+                            Case TileTrap
                                 RenderText Font_Default, "T", tx, ty, BrightRed, 0
-                            Case TILE_TYPE_SLIDE
+                            Case TileSlide
                                 RenderText Font_Default, "S", tx, ty, BrightCyan, 0
-                            Case TILE_TYPE_SOUND
+                            Case TileSound
                                 RenderText Font_Default, "S", tx, ty, Orange, 0
                         End Select
                     End With
@@ -427,7 +427,7 @@ Sub DrawActionMsg(ByVal Index As Long)
 
     ' how long we want each message to appear
     Select Case ActionMsg(Index).Type
-        Case ACTIONMSG_STATIC
+        Case MsgStatic
             Time = 1500
 
             If ActionMsg(Index).y > 0 Then
@@ -438,7 +438,7 @@ Sub DrawActionMsg(ByVal Index As Long)
                 y = ActionMsg(Index).y - Int(PIC_Y \ 2) + 18
             End If
 
-        Case ACTIONMSG_SCROLL
+        Case MsgScroll
             Time = 1500
         
             If ActionMsg(Index).y > 0 Then
@@ -451,12 +451,12 @@ Sub DrawActionMsg(ByVal Index As Long)
                 ActionMsg(Index).Scroll = ActionMsg(Index).Scroll + 1
             End If
 
-        Case ACTIONMSG_SCREEN
+        Case MsgScreen
             Time = 3000
 
             ' This will kill any action screen messages that there in the system
             For i = MAX_BYTE To 1 Step -1
-                If ActionMsg(i).Type = ACTIONMSG_SCREEN Then
+                If ActionMsg(i).Type = MsgScreen Then
                     If i <> Index Then
                         ClearActionMsg Index
                         Index = i
@@ -567,18 +567,18 @@ Public Sub DrawChatBubble(ByVal Index As Long)
 Dim theArray() As String, x As Long, y As Long, i As Long, MaxWidth As Long, x2 As Long, y2 As Long, colour As Long
     
     With chatBubble(Index)
-        If .targetType = TARGET_TYPE_PLAYER Then
+        If .targetType = TargetPlayer Then
             ' it's a player
             If GetPlayerMap(.target) = GetPlayerMap(MyIndex) Then
                 ' it's on our map - get co-ords
                 x = ConvertMapX((Player(.target).x * 32) + Player(.target).xOffset) + 16
                 y = ConvertMapY((Player(.target).y * 32) + Player(.target).yOffset) - 40
             End If
-        ElseIf .targetType = TARGET_TYPE_NPC Then
+        ElseIf .targetType = TargetNPC Then
             ' it's on our map - get co-ords
             x = ConvertMapX((MapNpc(.target).x * 32) + MapNpc(.target).xOffset) + 16
             y = ConvertMapY((MapNpc(.target).y * 32) + MapNpc(.target).yOffset) - 40
-        ElseIf .targetType = TARGET_TYPE_EVENT Then
+        ElseIf .targetType = TargetEvent Then
             x = ConvertMapX((Map.MapEvents(.target).x * 32) + Map.MapEvents(.target).xOffset) + 16
             y = ConvertMapY((Map.MapEvents(.target).y * 32) + Map.MapEvents(.target).yOffset) - 40
         End If

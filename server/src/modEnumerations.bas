@@ -249,6 +249,150 @@ Public Enum SoundEntity
     SoundEntity_Count
 End Enum
 
+' Tile Types
+Public Enum TileType
+    TileWalkable = 0
+    TileBlocked
+    TileWarp
+    TileItem
+    TileNPCAvoid
+    TileKey
+    TileKeyOPEN
+    TileResource
+    TileDoor
+    TileNPCSpawn
+    TileShop
+    TileBank
+    TileHeal
+    TileTrap
+    TileSlide
+    TileSound
+    TileCustom
+End Enum
+
+' Player Gender
+Public Enum Gender
+    Male = 0
+    Female
+End Enum
+
+' Item Types
+Public Enum ItemType
+    ItemNone = 0
+    ItemWeapon
+    ItemArmor
+    ItemHelmet
+    ItemShield
+    ItemConsume
+    ItemKey
+    ItemCurrency
+    ItemSpell
+    ItemCustom
+End Enum
+
+' Map Morals
+Public Enum MapMoral
+    MoralNone = 0
+    MoralSafe
+End Enum
+
+' Chat Log Enumerations
+Public Enum ChatLog
+    ChatGlobal = 0
+    ChatMap
+    ChatEmote
+    ChatPlayer
+    ChatSystem
+End Enum
+
+' Color Enumerations
+Public Enum Colors
+    Black = 0
+    Blue
+    Green
+    Cyan
+    Red
+    Magenta
+    Brown
+    Grey
+    DarkGrey
+    BrightBlue
+    BrightGreen
+    BrightCyan
+    BrightRed
+    Pink
+    Yellow
+    White
+    DarkBrown
+End Enum
+
+' Directions Enumeration
+Public Enum Directions
+    DirectionUp = 0
+    DirectionDown
+    DirectionLeft
+    DirectionRight
+End Enum
+
+' Enumeration for player movement
+Public Enum PlayerMoveState
+    PlayerWalking = 1
+    PlayerRunning
+End Enum
+
+' Admin Enumeration
+Public Enum PlayerRanks
+    RankNormal = 0
+    RankModerator
+    RankMapper
+    RankDeveloper
+    RankAdministrator
+End Enum
+
+' NPC Behaviour Enumeration
+Public Enum NPCAI
+    AIAttackOnSight = 0
+    AIAttackWhenAttacked
+    AIFriendly
+    AIImmobile
+    AIAssist
+End Enum
+
+' Spell Enumeration
+Public Enum SpellType
+    SpellDamageHP = 0
+    SpellDamageMP
+    SpellHealHP
+    SpellHealMP
+    SpellWarp
+    SpellCustom
+End Enum
+
+'Game Editors
+Public Enum GameEditors
+    GEditorItem = 1
+    GEditorNPC
+    GEditorSpell
+    GEditorShop
+    GEditorResource
+    GEditorAnimation
+End Enum
+
+' Target type Enumeration
+Public Enum targetType
+    TargetNone = 0
+    targetPlayer
+    TargetNPC
+    TargetEvent
+End Enum
+
+' Scrolling action message Enumeration
+Public Enum ActionMessages
+    MsgStatic = 0
+    MsgScroll
+    MsgScreen
+End Enum
+
 ' Event Types
 Public Enum EventType
     ' Message
@@ -299,7 +443,17 @@ Public Enum EventType
     evFadeOut
     evFlashWhite
     evSetFog
-    evSetWeather
+    evSetweather
     evSetTint
     evWait
+End Enum
+
+'Effect Types
+Public Enum EffectTypes
+    EffectFadeIn = 0
+    EffectFadeOut
+    EffectFlash
+    EffectFog
+    EffectWeather
+    EffectTint
 End Enum
