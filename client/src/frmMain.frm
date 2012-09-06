@@ -1304,6 +1304,7 @@ Begin VB.Form frmMain
       _Version        =   393217
       BackColor       =   790032
       BorderStyle     =   0
+      Enabled         =   -1  'True
       ScrollBars      =   2
       Appearance      =   0
       TextRTF         =   $"frmMain.frx":3332
@@ -2136,6 +2137,11 @@ Private MouseY As Long
 Private PresentX As Long
 Private PresentY As Long
 
+Private Declare Function GetDC Lib "user32" (ByVal hwnd As Long) As Long
+Private Declare Function BitBlt Lib "gdi32" (ByVal hDestDC As Long, ByVal x As Long, ByVal y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal xSrc As Long, ByVal ySrc As Long, ByVal dwRop As Long) As Long
+Private Declare Function ReleaseDC Lib "user32" (ByVal hwnd As Long, ByVal hdc As Long) As Long
+Private Const SRCCOPY = &HCC0020
+
 Private Sub cmdAAnim_Click()
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -2169,25 +2175,31 @@ errorhandler:
 End Sub
 
 Private Sub cmdSSMap_Click()
-Dim Rec As RECT
+Dim Rec As RECT, hdc As Long, i As Long
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
-    ' Set the screen size.
-    With Rec
-        .Top = 0
-        .Bottom = ScreenY
-        .Left = 0
-        .Right = ScreenX
-    End With
+    ' *************
+    ' Plain Broken. Direct3D8 is a fucking pain in the ass.
+    ' Please note that this is a WORKAROUND to get it to work right now.
+    ' Will have to look into a proper fix in the future.
+    ' *************
     
-    ' Take the screenshot.
-    TakeScreenshot App.Path & "\screenshots\", Rec
+    hdc = GetDC(frmMain.picScreen.hwnd)
+    BitBlt frmMain.picScreen.hdc, 0, 0, ScreenX, ScreenY, hdc, 0, 0, SRCCOPY
+    Call ReleaseDC(frmMain.picScreen.hwnd, hdc)
+    
+    i = 0
+    While FileExist("screenshots\" & str$(i) & ".bmp")
+        i = i + 1
+    Wend
+    
+    SavePicture frmMain.picScreen.Image, App.Path & "\screenshots\" & str$(i) & ".bmp"
     
     ' Error handler
     Exit Sub
 errorhandler:
-    HandleError "cmdLevel_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
+    HandleError "cmdSSMap_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
 End Sub

@@ -859,37 +859,6 @@ errorhandler:
     Exit Sub
 End Sub
 
-Public Sub TakeScreenshot(ByVal File_Path As String, ByRef SrcRec As RECT)
-Dim Surface As Direct3DSurface8
-Dim SrcPalette As PALETTEENTRY
-Dim Direct3D_Display_Mode As D3DDISPLAYMODE
-
-    'get display dimensions
-    Direct3D_Device.GetDisplayMode Direct3D_Display_Mode
-
-    'create a surface to put front buffer on,
-    'GetFrontBuffer always returns D3DFMT_A8R8G8B8
-    Set Surface = Direct3D_Device.CreateImageSurface(ScreenX, ScreenY, D3DFMT_A8R8G8B8)
-
-    'get data from front buffer
-    Direct3D_Device.GetFrontBuffer Surface
-
-    'we are saving entire area of this surface
-    With SrcRec
-        .Left = 0
-        .Right = ScreenX
-        .Top = 0
-        .Bottom = ScreenY
-    End With
-
-    'save this surface to a BMP file
-    Direct3DX.SaveSurfaceToFile File_Path, D3DXIFF_BMP, Surface, SrcPalette, SrcRec
-
-'Unload all of the DirectX objects
-Set Surface = Nothing
-End Sub
-
-
 Public Sub DrawMapResource(ByVal Resource_num As Long, Optional ByVal ScreenShot As Boolean = False)
 Dim Resource_master As Long
 Dim Resource_state As Long
@@ -1662,7 +1631,7 @@ errorhandler:
 End Sub
 
 Sub DrawFace()
-Dim Rec As RECT, rec_pos As RECT, faceNum As Long, SrcRect As D3DRECT
+Dim Rec As RECT, rec_pos As RECT, faceNum As Long, srcRect As D3DRECT
     
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -1691,14 +1660,14 @@ Dim Rec As RECT, rec_pos As RECT, faceNum As Long, SrcRect As D3DRECT
     End With
 
     RenderTextureByRects Tex_Face(faceNum), Rec, rec_pos
-    With SrcRect
+    With srcRect
         .x1 = 0
         .x2 = frmMain.picFace.Width
         .y1 = 0
         .y2 = frmMain.picFace.Height
     End With
     Direct3D_Device.EndScene
-    Direct3D_Device.Present SrcRect, SrcRect, frmMain.picFace.hwnd, ByVal (0)
+    Direct3D_Device.Present srcRect, srcRect, frmMain.picFace.hwnd, ByVal (0)
     
     ' Error handler
     Exit Sub
@@ -1710,7 +1679,7 @@ End Sub
 
 Sub DrawEquipment()
 Dim i As Long, itemnum As Long, itempic As Long
-Dim Rec As RECT, rec_pos As RECT, SrcRect As D3DRECT, destRect As D3DRECT
+Dim Rec As RECT, rec_pos As RECT, srcRect As D3DRECT, destRect As D3DRECT
     
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -1741,13 +1710,13 @@ Dim Rec As RECT, rec_pos As RECT, SrcRect As D3DRECT, destRect As D3DRECT
             Direct3D_Device.BeginScene
             RenderTextureByRects Tex_Item(itempic), Rec, rec_pos
             Direct3D_Device.EndScene
-            With SrcRect
+            With srcRect
                 .x1 = rec_pos.Left
                 .x2 = rec_pos.Right
                 .y1 = rec_pos.Top
                 .y2 = rec_pos.Bottom
             End With
-            Direct3D_Device.Present SrcRect, SrcRect, frmMain.picCharacter.hwnd, ByVal (0)
+            Direct3D_Device.Present srcRect, srcRect, frmMain.picCharacter.hwnd, ByVal (0)
         End If
     Next
     
@@ -1763,7 +1732,7 @@ End Sub
 Sub DrawInventory()
 Dim i As Long, x As Long, y As Long, itemnum As Long, itempic As Long
 Dim Amount As Long
-Dim Rec As RECT, rec_pos As RECT, SrcRect As D3DRECT, destRect As D3DRECT
+Dim Rec As RECT, rec_pos As RECT, srcRect As D3DRECT, destRect As D3DRECT
 Dim colour As Long
 Dim tmpItem As Long, amountModifier As Long
 
@@ -1853,7 +1822,7 @@ NextLoop:
     'update animated items
     DrawAnimatedInvItems
     
-    With SrcRect
+    With srcRect
         .x1 = 0
         .x2 = frmMain.picInventory.Width
         .y1 = 28
@@ -1868,7 +1837,7 @@ NextLoop:
     End With
     
     Direct3D_Device.EndScene
-    Direct3D_Device.Present SrcRect, destRect, frmMain.picInventory.hwnd, ByVal (0)
+    Direct3D_Device.Present srcRect, destRect, frmMain.picInventory.hwnd, ByVal (0)
     
     ' Error handler
     Exit Sub
@@ -1879,7 +1848,7 @@ errorhandler:
 End Sub
 
 Sub DrawTrade()
-Dim i As Long, x As Long, y As Long, itemnum As Long, itempic As Long, SrcRect As D3DRECT, destRect As D3DRECT
+Dim i As Long, x As Long, y As Long, itemnum As Long, itempic As Long, srcRect As D3DRECT, destRect As D3DRECT
 Dim Amount As Long
 Dim Rec As RECT, rec_pos As RECT
 Dim colour As Long
@@ -1936,7 +1905,7 @@ Dim colour As Long
         End If
     Next
     
-    With SrcRect
+    With srcRect
         .x1 = 0
         .x2 = .x1 + 193
         .y1 = 0
@@ -1951,7 +1920,7 @@ Dim colour As Long
     End With
                     
     Direct3D_Device.EndScene
-    Direct3D_Device.Present SrcRect, destRect, frmMain.picYourTrade.hwnd, ByVal (0)
+    Direct3D_Device.Present srcRect, destRect, frmMain.picYourTrade.hwnd, ByVal (0)
     
     
     Direct3D_Device.Clear 0, ByVal 0, D3DCLEAR_TARGET, D3DColorRGBA(0, 0, 0, 0), 1#, 0
@@ -2000,7 +1969,7 @@ Dim colour As Long
         End If
     Next
     
-    With SrcRect
+    With srcRect
         .x1 = 0
         .x2 = .x1 + 193
         .y1 = 0
@@ -2015,7 +1984,7 @@ Dim colour As Long
     End With
                     
     Direct3D_Device.EndScene
-    Direct3D_Device.Present SrcRect, destRect, frmMain.picTheirTrade.hwnd, ByVal (0)
+    Direct3D_Device.Present srcRect, destRect, frmMain.picTheirTrade.hwnd, ByVal (0)
     
     ' Error handler
     Exit Sub
@@ -2026,7 +1995,7 @@ errorhandler:
 End Sub
 
 Sub DrawPlayerSpells()
-Dim i As Long, x As Long, y As Long, spellnum As Long, spellicon As Long, SrcRect As D3DRECT, destRect As D3DRECT
+Dim i As Long, x As Long, y As Long, spellnum As Long, spellicon As Long, srcRect As D3DRECT, destRect As D3DRECT
 Dim Amount As String
 Dim Rec As RECT, rec_pos As RECT
 Dim colour As Long
@@ -2072,7 +2041,7 @@ Dim colour As Long
         End If
     Next
     
-    With SrcRect
+    With srcRect
         .x1 = 0
         .x2 = frmMain.picSpells.Width
         .y1 = 28
@@ -2087,7 +2056,7 @@ Dim colour As Long
     End With
     
     Direct3D_Device.EndScene
-    Direct3D_Device.Present SrcRect, destRect, frmMain.picSpells.hwnd, ByVal (0)
+    Direct3D_Device.Present srcRect, destRect, frmMain.picSpells.hwnd, ByVal (0)
     
     ' Error handler
     Exit Sub
@@ -2098,7 +2067,7 @@ errorhandler:
 End Sub
 
 Sub DrawShop()
-Dim i As Long, x As Long, y As Long, itemnum As Long, itempic As Long, SrcRect As D3DRECT, destRect As D3DRECT
+Dim i As Long, x As Long, y As Long, itemnum As Long, itempic As Long, srcRect As D3DRECT, destRect As D3DRECT
 Dim Amount As String
 Dim Rec As RECT, rec_pos As RECT
 Dim colour As Long
@@ -2153,7 +2122,7 @@ Dim colour As Long
         End If
     Next
     
-    With SrcRect
+    With srcRect
         .x1 = ShopLeft
         .x2 = .x1 + 192
         .y1 = ShopTop
@@ -2168,7 +2137,7 @@ Dim colour As Long
     End With
                 
     Direct3D_Device.EndScene
-    Direct3D_Device.Present SrcRect, destRect, frmMain.picShopItems.hwnd, ByVal (0)
+    Direct3D_Device.Present srcRect, destRect, frmMain.picShopItems.hwnd, ByVal (0)
     
     ' Error handler
     Exit Sub
@@ -2179,7 +2148,7 @@ errorhandler:
 End Sub
 
 Public Sub DrawInventoryItem(ByVal x As Long, ByVal y As Long)
-Dim Rec As RECT, rec_pos As RECT, SrcRect As D3DRECT, destRect As D3DRECT
+Dim Rec As RECT, rec_pos As RECT, srcRect As D3DRECT, destRect As D3DRECT
 Dim itemnum As Long, itempic As Long
 
     ' If debug mode, handle error then exit out
@@ -2217,7 +2186,7 @@ Dim itemnum As Long, itempic As Long
             .Visible = True
             .ZOrder (0)
         End With
-        With SrcRect
+        With srcRect
             .x1 = 0
             .x2 = 32
             .y1 = 0
@@ -2230,7 +2199,7 @@ Dim itemnum As Long, itempic As Long
             .x2 = .x1 + 32
         End With
         Direct3D_Device.EndScene
-        Direct3D_Device.Present SrcRect, destRect, frmMain.picTempInv.hwnd, ByVal (0)
+        Direct3D_Device.Present srcRect, destRect, frmMain.picTempInv.hwnd, ByVal (0)
     End If
 
     ' Error handler
@@ -2242,7 +2211,7 @@ errorhandler:
 End Sub
 
 Public Sub DrawDraggedSpell(ByVal x As Long, ByVal y As Long)
-Dim Rec As RECT, rec_pos As RECT, SrcRect As D3DRECT, destRect As D3DRECT
+Dim Rec As RECT, rec_pos As RECT, srcRect As D3DRECT, destRect As D3DRECT
 Dim spellnum As Long, spellpic As Long
 
     ' If debug mode, handle error then exit out
@@ -2281,7 +2250,7 @@ Dim spellnum As Long, spellpic As Long
             .ZOrder (0)
         End With
         
-        With SrcRect
+        With srcRect
             .x1 = 0
             .x2 = 32
             .y1 = 0
@@ -2294,7 +2263,7 @@ Dim spellnum As Long, spellpic As Long
             .x2 = .x1 + 32
         End With
         Direct3D_Device.EndScene
-        Direct3D_Device.Present SrcRect, destRect, frmMain.picTempSpell.hwnd, ByVal (0)
+        Direct3D_Device.Present srcRect, destRect, frmMain.picTempSpell.hwnd, ByVal (0)
     End If
     
     ' Error handler
@@ -2306,7 +2275,7 @@ errorhandler:
 End Sub
 
 Public Sub DrawItemDesc(ByVal itemnum As Long)
-Dim Rec As RECT, rec_pos As RECT, SrcRect As D3DRECT, destRect As D3DRECT
+Dim Rec As RECT, rec_pos As RECT, srcRect As D3DRECT, destRect As D3DRECT
 Dim itempic As Long
 
     ' If debug mode, handle error then exit out
@@ -2357,7 +2326,7 @@ errorhandler:
 End Sub
 
 Public Sub DrawSpellDesc(ByVal spellnum As Long)
-Dim Rec As RECT, rec_pos As RECT, SrcRect As D3DRECT, destRect As D3DRECT
+Dim Rec As RECT, rec_pos As RECT, srcRect As D3DRECT, destRect As D3DRECT
 Dim spellpic As Long
 
     ' If debug mode, handle error then exit out
@@ -2411,7 +2380,7 @@ End Sub
 ' ** Game Editors **
 ' ******************
 Public Sub EditorMap_DrawTileset()
-Dim Height As Long, SrcRect As D3DRECT, destRect As D3DRECT
+Dim Height As Long, srcRect As D3DRECT, destRect As D3DRECT
 Dim Width As Long
 Dim Tileset As Long
 Dim sRect As RECT
@@ -2477,7 +2446,7 @@ Dim dRect As RECT, scrlX As Long, scrlY As Long
     
     DrawSelectionBox destRect
         
-    With SrcRect
+    With srcRect
         .x1 = 0
         .x2 = Width
         .y1 = 0
@@ -2549,7 +2518,7 @@ errorhandler:
 End Sub
 
 Public Sub NewCharacterDrawSprite()
-Dim Sprite As Long, SrcRect As D3DRECT, destRect As D3DRECT
+Dim Sprite As Long, srcRect As D3DRECT, destRect As D3DRECT
 Dim sRect As RECT
 Dim dRect As RECT
 Dim Width As Long, Height As Long
@@ -2591,7 +2560,7 @@ Dim Width As Long, Height As Long
     
     RenderTextureByRects Tex_Character(Sprite), sRect, dRect
     
-    With SrcRect
+    With srcRect
         .x1 = 0
         .x2 = Width
         .y1 = 0
@@ -2606,7 +2575,7 @@ Dim Width As Long, Height As Long
     End With
                     
     Direct3D_Device.EndScene
-    Direct3D_Device.Present SrcRect, destRect, frmMenu.picSprite.hwnd, ByVal (0)
+    Direct3D_Device.Present srcRect, destRect, frmMenu.picSprite.hwnd, ByVal (0)
     
     ' Error handler
     Exit Sub
@@ -2753,7 +2722,7 @@ errorhandler:
 End Sub
 
 Public Sub GEditorItem_DrawPaperdoll()
-Dim Sprite As Long, SrcRect As D3DRECT, destRect As D3DRECT
+Dim Sprite As Long, srcRect As D3DRECT, destRect As D3DRECT
 Dim sRect As RECT
 Dim dRect As RECT
     
@@ -2848,7 +2817,7 @@ Dim Animationnum As Long
 Dim sRect As RECT
 Dim dRect As RECT
 Dim i As Long
-Dim Width As Long, Height As Long, SrcRect As D3DRECT, destRect As D3DRECT
+Dim Width As Long, Height As Long, srcRect As D3DRECT, destRect As D3DRECT
 Dim looptime As Long
 Dim FrameCount As Long
 Dim ShouldRender As Boolean
@@ -2901,7 +2870,7 @@ Dim ShouldRender As Boolean
                     
                     RenderTextureByRects Tex_Animation(Animationnum), sRect, dRect
                     
-                    With SrcRect
+                    With srcRect
                         .x1 = 0
                         .x2 = frmEditor_Animation.picSprite(i).Width
                         .y1 = 0
@@ -2916,7 +2885,7 @@ Dim ShouldRender As Boolean
                     End With
                                 
                     Direct3D_Device.EndScene
-                    Direct3D_Device.Present SrcRect, destRect, frmEditor_Animation.picSprite(i).hwnd, ByVal (0)
+                    Direct3D_Device.Present srcRect, destRect, frmEditor_Animation.picSprite(i).hwnd, ByVal (0)
                 End If
             End If
         End If
@@ -2978,7 +2947,7 @@ End Sub
 
 Public Sub GEditorResource_DrawSprite()
 Dim Sprite As Long
-Dim sRect As RECT, destRect As D3DRECT, SrcRect As D3DRECT
+Dim sRect As RECT, destRect As D3DRECT, srcRect As D3DRECT
 Dim dRect As RECT
     
     ' If debug mode, handle error then exit out
@@ -3001,7 +2970,7 @@ Dim dRect As RECT
         Direct3D_Device.Clear 0, ByVal 0, D3DCLEAR_TARGET, D3DColorRGBA(0, 0, 0, 0), 1#, 0
         Direct3D_Device.BeginScene
         RenderTextureByRects Tex_Resource(Sprite), sRect, dRect
-        With SrcRect
+        With srcRect
             .x1 = 0
             .x2 = Tex_Resource(Sprite).Width
             .y1 = 0
@@ -3016,7 +2985,7 @@ Dim dRect As RECT
         End With
                     
         Direct3D_Device.EndScene
-        Direct3D_Device.Present SrcRect, destRect, frmEditor_Resource.picNormalPic.hwnd, ByVal (0)
+        Direct3D_Device.Present srcRect, destRect, frmEditor_Resource.picNormalPic.hwnd, ByVal (0)
     End If
 
     ' exhausted sprite
@@ -3044,7 +3013,7 @@ Dim dRect As RECT
             .y2 = frmEditor_Resource.picExhaustedPic.ScaleHeight
         End With
         
-        With SrcRect
+        With srcRect
             .x1 = 0
             .x2 = Tex_Resource(Sprite).Width
             .y1 = 0
@@ -3052,7 +3021,7 @@ Dim dRect As RECT
         End With
                     
         Direct3D_Device.EndScene
-        Direct3D_Device.Present SrcRect, destRect, frmEditor_Resource.picExhaustedPic.hwnd, ByVal (0)
+        Direct3D_Device.Present srcRect, destRect, frmEditor_Resource.picExhaustedPic.hwnd, ByVal (0)
     End If
     
     ' Error handler
@@ -3068,7 +3037,7 @@ Dim x As Long
 Dim y As Long
 Dim i As Long
 Dim Rec As RECT
-Dim rec_pos As RECT, SrcRect As D3DRECT
+Dim rec_pos As RECT, srcRect As D3DRECT
     
     ' If debug mode, handle error then exit out
    On Error GoTo errorhandler
@@ -3278,7 +3247,7 @@ Dim rec_pos As RECT, SrcRect As D3DRECT
                 .Right = ScreenX
             End With
                 
-            With SrcRect
+            With srcRect
                 .x1 = 0
                 .x2 = frmMain.picScreen.ScaleWidth
                 .y1 = 0
@@ -3344,7 +3313,7 @@ Dim rec_pos As RECT, SrcRect As D3DRECT
         HandleDeviceLost
         Exit Sub
     Else
-        If InShop = False And InBank = False Then Direct3D_Device.Present SrcRect, ByVal 0, 0, ByVal 0
+        If InShop = False And InBank = False Then Direct3D_Device.Present srcRect, ByVal 0, 0, ByVal 0
         DrawGDI
     End If
 
@@ -3625,7 +3594,7 @@ errorhandler:
 End Sub
 
 Sub DrawBank()
-Dim i As Long, x As Long, y As Long, itemnum As Long, SrcRect As D3DRECT, destRect As D3DRECT
+Dim i As Long, x As Long, y As Long, itemnum As Long, srcRect As D3DRECT, destRect As D3DRECT
 Dim Amount As String
 Dim sRect As RECT, dRect As RECT
 Dim Sprite As Long, colour As Long
@@ -3682,7 +3651,7 @@ Dim Sprite As Long, colour As Long
             End If
         Next
         
-        With SrcRect
+        With srcRect
             .x1 = BankLeft
             .x2 = .x1 + 400
             .y1 = BankTop
@@ -3697,7 +3666,7 @@ Dim Sprite As Long, colour As Long
         End With
                     
         Direct3D_Device.EndScene
-        Direct3D_Device.Present SrcRect, destRect, frmMain.picBank.hwnd, ByVal (0)
+        Direct3D_Device.Present srcRect, destRect, frmMain.picBank.hwnd, ByVal (0)
         'frmMain.picBank.Refresh
     End If
     
@@ -3710,7 +3679,7 @@ errorhandler:
 End Sub
 
 Public Sub DrawBankItem(ByVal x As Long, ByVal y As Long)
-Dim sRect As RECT, dRect As RECT, SrcRect As D3DRECT, destRect As D3DRECT
+Dim sRect As RECT, dRect As RECT, srcRect As D3DRECT, destRect As D3DRECT
 Dim itemnum As Long
 Dim Sprite As Long
     
@@ -3749,7 +3718,7 @@ Dim Sprite As Long
         .ZOrder (0)
     End With
     
-    With SrcRect
+    With srcRect
         .x1 = 0
         .x2 = 32
         .y1 = 0
@@ -3762,7 +3731,7 @@ Dim Sprite As Long
         .x2 = .x1 + 32
     End With
     Direct3D_Device.EndScene
-    Direct3D_Device.Present SrcRect, destRect, frmMain.picTempBank.hwnd, ByVal (0)
+    Direct3D_Device.Present srcRect, destRect, frmMain.picTempBank.hwnd, ByVal (0)
     
     ' Error handler
     Exit Sub
@@ -3862,7 +3831,7 @@ errorhandler:
 End Sub
 
 Public Sub EditorEvent_DrawGraphic()
-Dim sRect As RECT, destRect As D3DRECT, SrcRect As D3DRECT
+Dim sRect As RECT, destRect As D3DRECT, srcRect As D3DRECT
 Dim dRect As RECT
 
     ' If debug mode, handle error then exit out
@@ -3928,7 +3897,7 @@ Dim dRect As RECT
                     End If
                     DrawSelectionBox destRect
                     
-                    With SrcRect
+                    With srcRect
                         .x1 = dRect.Left
                         .x2 = frmEditor_Events.picGraphicSel.ScaleWidth
                         .y1 = dRect.Top
@@ -3941,7 +3910,7 @@ Dim dRect As RECT
                         .y2 = frmEditor_Events.picGraphicSel.ScaleHeight
                     End With
                     Direct3D_Device.EndScene
-                    Direct3D_Device.Present SrcRect, destRect, frmEditor_Events.picGraphicSel.hwnd, ByVal (0)
+                    Direct3D_Device.Present srcRect, destRect, frmEditor_Events.picGraphicSel.hwnd, ByVal (0)
                     
                     If GraphicSelX <= 3 And GraphicSelY <= 3 Then
                     Else
@@ -4006,7 +3975,7 @@ Dim dRect As RECT
                     
                     DrawSelectionBox destRect
                     
-                    With SrcRect
+                    With srcRect
                         .x1 = dRect.Left
                         .x2 = frmEditor_Events.picGraphicSel.ScaleWidth
                         .y1 = dRect.Top
@@ -4019,7 +3988,7 @@ Dim dRect As RECT
                         .y2 = frmEditor_Events.picGraphicSel.ScaleHeight
                     End With
                     Direct3D_Device.EndScene
-                    Direct3D_Device.Present SrcRect, destRect, frmEditor_Events.picGraphicSel.hwnd, ByVal (0)
+                    Direct3D_Device.Present srcRect, destRect, frmEditor_Events.picGraphicSel.hwnd, ByVal (0)
                 Else
                     frmEditor_Events.picGraphicSel.Cls
                     Exit Sub
