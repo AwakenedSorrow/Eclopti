@@ -2140,10 +2140,7 @@ Private Sub cmdAAnim_Click()
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
-    If GetPlayerAccess(MyIndex) < RankDeveloper Then
-        
-        Exit Sub
-    End If
+    If GetPlayerAccess(MyIndex) < RankDeveloper Then Exit Sub
 
     SendRequestEditAnimation
     
@@ -2159,10 +2156,7 @@ Private Sub cmdLevel_Click()
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
-    If GetPlayerAccess(MyIndex) < RankDeveloper Then
-        
-        Exit Sub
-    End If
+    If GetPlayerAccess(MyIndex) < RankDeveloper Then Exit Sub
 
     SendRequestLevelUp
     
@@ -2175,11 +2169,20 @@ errorhandler:
 End Sub
 
 Private Sub cmdSSMap_Click()
+Dim Rec As RECT
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
-    ' render the map temp
-    ScreenshotMap
+    ' Set the screen size.
+    With Rec
+        .Top = 0
+        .Bottom = ScreenY
+        .Left = 0
+        .Right = ScreenX
+    End With
+    
+    ' Take the screenshot.
+    TakeScreenshot App.Path & "\screenshots\", Rec
     
     ' Error handler
     Exit Sub

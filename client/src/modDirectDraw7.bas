@@ -7,7 +7,7 @@ Option Explicit
 Private DirectX8 As DirectX8 'The master DirectX object.
 Private Direct3D As Direct3D8 'Controls all things 3D.
 Public Direct3D_Device As Direct3DDevice8 'Represents the hardware rendering.
-Private Direct3DX As D3DX8
+Public Direct3DX As D3DX8
 
 'The 2D (Transformed and Lit) vertex format.
 Private Const FVF_TLVERTEX As Long = D3DFVF_XYZRHW Or D3DFVF_TEX1 Or D3DFVF_DIFFUSE
@@ -72,7 +72,7 @@ Public Type DX8TextureRec
     Texture As Long
     Width As Long
     Height As Long
-    filepath As String
+    FilePath As String
     TexWidth As Long
     TexHeight As Long
     ImageData() As Byte
@@ -205,7 +205,7 @@ Dim newWidth As Long, newHeight As Long, ImageData() As Byte, fn As Long
         Set GDIToken = New cGDIpToken
         If GDIToken.Token = 0& Then MsgBox "GDI+ failed to load, exiting game!": DestroyGame
         Set SourceBitmap = New cGDIpImage
-        Call SourceBitmap.LoadPicture_FileName(TextureRec.filepath, GDIToken)
+        Call SourceBitmap.LoadPicture_FileName(TextureRec.FilePath, GDIToken)
         
         TextureRec.Width = SourceBitmap.Width
         TextureRec.Height = SourceBitmap.Height
@@ -271,37 +271,37 @@ Dim i As Long
     NumTextures = NumTextures + 11
     
     ReDim Preserve gTexture(NumTextures)
-    Tex_Fade.filepath = App.Path & "\data files\graphics\misc\fader.png"
+    Tex_Fade.FilePath = App.Path & "\data files\graphics\misc\fader.png"
     Tex_Fade.Texture = NumTextures - 10
     LoadTexture Tex_Fade
-    Tex_ChatBubble.filepath = App.Path & "\data files\graphics\misc\chatbubble.png"
+    Tex_ChatBubble.FilePath = App.Path & "\data files\graphics\misc\chatbubble.png"
     Tex_ChatBubble.Texture = NumTextures - 9
     LoadTexture Tex_ChatBubble
-    Tex_Weather.filepath = App.Path & "\data files\graphics\misc\weather.png"
+    Tex_Weather.FilePath = App.Path & "\data files\graphics\misc\weather.png"
     Tex_Weather.Texture = NumTextures - 8
     LoadTexture Tex_Weather
-    Tex_White.filepath = App.Path & "\data files\graphics\misc\white.png"
+    Tex_White.FilePath = App.Path & "\data files\graphics\misc\white.png"
     Tex_White.Texture = NumTextures - 7
     LoadTexture Tex_White
-    Tex_Door.filepath = App.Path & "\data files\graphics\misc\door.png"
+    Tex_Door.FilePath = App.Path & "\data files\graphics\misc\door.png"
     Tex_Door.Texture = NumTextures - 6
     LoadTexture Tex_Door
-    Tex_Direction.filepath = App.Path & "\data files\graphics\misc\direction.png"
+    Tex_Direction.FilePath = App.Path & "\data files\graphics\misc\direction.png"
     Tex_Direction.Texture = NumTextures - 5
     LoadTexture Tex_Direction
-    Tex_Target.filepath = App.Path & "\data files\graphics\misc\target.png"
+    Tex_Target.FilePath = App.Path & "\data files\graphics\misc\target.png"
     Tex_Target.Texture = NumTextures - 4
     LoadTexture Tex_Target
-    Tex_Misc.filepath = App.Path & "\data files\graphics\misc\misc.png"
+    Tex_Misc.FilePath = App.Path & "\data files\graphics\misc\misc.png"
     Tex_Misc.Texture = NumTextures - 3
     LoadTexture Tex_Misc
-    Tex_Blood.filepath = App.Path & "\data files\graphics\misc\blood.png"
+    Tex_Blood.FilePath = App.Path & "\data files\graphics\misc\blood.png"
     Tex_Blood.Texture = NumTextures - 2
     LoadTexture Tex_Blood
-    Tex_Bars.filepath = App.Path & "\data files\graphics\misc\bars.png"
+    Tex_Bars.FilePath = App.Path & "\data files\graphics\misc\bars.png"
     Tex_Bars.Texture = NumTextures - 1
     LoadTexture Tex_Bars
-    Tex_Selection.filepath = App.Path & "\data files\graphics\misc\select.png"
+    Tex_Selection.FilePath = App.Path & "\data files\graphics\misc\select.png"
     Tex_Selection.Texture = NumTextures
     LoadTexture Tex_Selection
     
@@ -431,32 +431,32 @@ errorhandler:
 End Sub
 
 Public Sub DrawDirection(ByVal x As Long, ByVal y As Long)
-Dim rec As RECT
+Dim Rec As RECT
 Dim i As Long
     
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     ' render grid
-    rec.Top = 24
-    rec.Left = 0
-    rec.Right = rec.Left + 32
-    rec.Bottom = rec.Top + 32
-    RenderTexture Tex_Direction, ConvertMapX(x * PIC_X), ConvertMapY(y * PIC_Y), rec.Left, rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, D3DColorRGBA(255, 255, 255, 255)
+    Rec.Top = 24
+    Rec.Left = 0
+    Rec.Right = Rec.Left + 32
+    Rec.Bottom = Rec.Top + 32
+    RenderTexture Tex_Direction, ConvertMapX(x * PIC_X), ConvertMapY(y * PIC_Y), Rec.Left, Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, D3DColorRGBA(255, 255, 255, 255)
     
     ' render dir blobs
     For i = 1 To 4
-        rec.Left = (i - 1) * 8
-        rec.Right = rec.Left + 8
+        Rec.Left = (i - 1) * 8
+        Rec.Right = Rec.Left + 8
         ' find out whether render blocked or not
         If Not isDirBlocked(Map.Tile(x, y).DirBlock, CByte(i)) Then
-            rec.Top = 8
+            Rec.Top = 8
         Else
-            rec.Top = 16
+            Rec.Top = 16
         End If
-        rec.Bottom = rec.Top + 8
+        Rec.Bottom = Rec.Top + 8
         'render!
-        RenderTexture Tex_Direction, ConvertMapX(x * PIC_X) + DirArrowX(i), ConvertMapY(y * PIC_Y) + DirArrowY(i), rec.Left, rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, D3DColorRGBA(255, 255, 255, 255)
+        RenderTexture Tex_Direction, ConvertMapX(x * PIC_X) + DirArrowX(i), ConvertMapY(y * PIC_Y) + DirArrowY(i), Rec.Left, Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, D3DColorRGBA(255, 255, 255, 255)
     Next
     
     ' Error handler
@@ -568,7 +568,7 @@ errorhandler:
 End Sub
 
 Public Sub DrawMapTile(ByVal x As Long, ByVal y As Long)
-Dim rec As RECT
+Dim Rec As RECT
 Dim i As Long
     
     ' If debug mode, handle error then exit out
@@ -599,7 +599,7 @@ errorhandler:
 End Sub
 
 Public Sub DrawMapFringeTile(ByVal x As Long, ByVal y As Long)
-Dim rec As RECT
+Dim Rec As RECT
 Dim i As Long
 
     ' If debug mode, handle error then exit out
@@ -629,7 +629,7 @@ errorhandler:
 End Sub
 
 Public Sub DrawDoor(ByVal x As Long, ByVal y As Long)
-Dim rec As RECT
+Dim Rec As RECT
 Dim x2 As Long, y2 As Long
     
     ' If debug mode, handle error then exit out
@@ -660,7 +660,7 @@ Dim x2 As Long, y2 As Long
         If .DoorFrame = 0 Then .DoorFrame = 1
     End With
 
-    With rec
+    With Rec
         .Top = 0
         .Bottom = Tex_Door.Height
         .Left = ((TempTile(x, y).DoorFrame - 1) * (Tex_Door.Width / 4))
@@ -669,7 +669,7 @@ Dim x2 As Long, y2 As Long
 
     x2 = (x * PIC_X)
     y2 = (y * PIC_Y) - (Tex_Door.Height / 2) + 4
-    RenderTexture Tex_Door, ConvertMapX(x2), ConvertMapY(y2), rec.Left, rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, D3DColorRGBA(255, 255, 255, 255)
+    RenderTexture Tex_Door, ConvertMapX(x2), ConvertMapY(y2), Rec.Left, Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, D3DColorRGBA(255, 255, 255, 255)
     'Call DDS_BackBuffer.DrawFast(ConvertMapX(X2), ConvertMapY(Y2), DDS_Door, rec, DDDrawFAST_WAIT Or DDDrawFAST_SRCCOLORKEY)
     
     ' Error handler
@@ -681,7 +681,7 @@ errorhandler:
 End Sub
 
 Public Sub DrawBlood(ByVal Index As Long)
-Dim rec As RECT
+Dim Rec As RECT
     
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -692,11 +692,11 @@ Dim rec As RECT
         ' check if we should be seeing it
         If .timer + 20000 < GetTickCount Then Exit Sub
         
-        rec.Top = 0
-        rec.Bottom = PIC_Y
-        rec.Left = (.Sprite - 1) * PIC_X
-        rec.Right = rec.Left + PIC_X
-        RenderTexture Tex_Blood, ConvertMapX(.x * PIC_X), ConvertMapY(.y * PIC_Y), rec.Left, rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, D3DColorRGBA(255, 255, 255, 255)
+        Rec.Top = 0
+        Rec.Bottom = PIC_Y
+        Rec.Left = (.Sprite - 1) * PIC_X
+        Rec.Right = Rec.Left + PIC_X
+        RenderTexture Tex_Blood, ConvertMapX(.x * PIC_X), ConvertMapY(.y * PIC_Y), Rec.Left, Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, D3DColorRGBA(255, 255, 255, 255)
     End With
     
     ' Error handler
@@ -817,7 +817,7 @@ End Sub
 
 Public Sub DrawItem(ByVal itemnum As Long)
 Dim PicNum As Long
-Dim rec As RECT
+Dim Rec As RECT
 Dim MaxFrames As Byte
 
     ' If debug mode, handle error then exit out
@@ -834,14 +834,14 @@ Dim MaxFrames As Byte
     If PicNum < 1 Or PicNum > numitems Then Exit Sub
 
     If Tex_Item(PicNum).Width > 64 Then ' has more than 1 frame
-        With rec
+        With Rec
             .Top = 0
             .Bottom = 32
             .Left = (MapItem(itemnum).Frame * 32)
             .Right = .Left + 32
         End With
     Else
-        With rec
+        With Rec
             .Top = 0
             .Bottom = PIC_Y
             .Left = 0
@@ -849,7 +849,7 @@ Dim MaxFrames As Byte
         End With
     End If
     
-    RenderTexture Tex_Item(PicNum), ConvertMapX(MapItem(itemnum).x * PIC_X), ConvertMapY(MapItem(itemnum).y * PIC_Y), rec.Left, rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, D3DColorRGBA(255, 255, 255, 255)
+    RenderTexture Tex_Item(PicNum), ConvertMapX(MapItem(itemnum).x * PIC_X), ConvertMapY(MapItem(itemnum).y * PIC_Y), Rec.Left, Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, D3DColorRGBA(255, 255, 255, 255)
     
     ' Error handler
     Exit Sub
@@ -859,104 +859,42 @@ errorhandler:
     Exit Sub
 End Sub
 
-Public Sub ScreenshotMap()
-Dim x As Long, y As Long, i As Long, rec As RECT, drec As RECT
+Public Sub TakeScreenshot(ByVal File_Path As String, ByRef SrcRec As RECT)
+Dim Surface As Direct3DSurface8
+Dim SrcPalette As PALETTEENTRY
+Dim Direct3D_Display_Mode As D3DDISPLAYMODE
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    frmMain.picSSMap.Cls
-    
-    ' render the tiles
-    For x = 0 To Map.MaxX
-        For y = 0 To Map.MaxY
-            With Map.Tile(x, y)
-                For i = MapLayer.Ground To MapLayer.Mask2
-                    ' skip tile?
-                    If (.Layer(i).Tileset > 0 And .Layer(i).Tileset <= NumTileSets) And (.Layer(i).x > 0 Or .Layer(i).y > 0) Then
-                        ' sort out rec
-                        rec.Top = .Layer(i).y * PIC_Y
-                        rec.Bottom = rec.Top + PIC_Y
-                        rec.Left = .Layer(i).x * PIC_X
-                        rec.Right = rec.Left + PIC_X
-                        
-                        drec.Left = x * PIC_X
-                        drec.Top = y * PIC_Y
-                        drec.Right = drec.Left + (rec.Right - rec.Left)
-                        drec.Bottom = drec.Top + (rec.Bottom - rec.Top)
-                        ' render
-                        RenderTextureByRects Tex_Tileset(.Layer(i).Tileset), rec, drec
-                    End If
-                Next
-            End With
-        Next
-    Next
-    
-    ' render the resources
-    For y = 0 To Map.MaxY
-        If NumResources > 0 Then
-            If Resources_Init Then
-                If Resource_Index > 0 Then
-                    For i = 1 To Resource_Index
-                        If MapResource(i).y = y Then
-                            Call DrawMapResource(i, True)
-                        End If
-                    Next
-                End If
-            End If
-        End If
-    Next
-    
-    ' render the tiles
-    For x = 0 To Map.MaxX
-        For y = 0 To Map.MaxY
-            With Map.Tile(x, y)
-                For i = MapLayer.Fringe To MapLayer.Fringe2
-                    ' skip tile?
-                    If (.Layer(i).Tileset > 0 And .Layer(i).Tileset <= NumTileSets) And (.Layer(i).x > 0 Or .Layer(i).y > 0) Then
-                        ' sort out rec
-                        rec.Top = .Layer(i).y * PIC_Y
-                        rec.Bottom = rec.Top + PIC_Y
-                        rec.Left = .Layer(i).x * PIC_X
-                        rec.Right = rec.Left + PIC_X
-                        
-                        drec.Left = x * PIC_X
-                        drec.Top = y * PIC_Y
-                        drec.Right = drec.Left + (rec.Right - rec.Left)
-                        drec.Bottom = drec.Top + (rec.Bottom - rec.Top)
-                        ' render
-                        RenderTextureByRects Tex_Tileset(.Layer(i).Tileset), rec, drec
-                    End If
-                Next
-            End With
-        Next
-    Next
-    
-    ' dump and save
-    frmMain.picSSMap.Width = (Map.MaxX + 1) * 32
-    frmMain.picSSMap.Height = (Map.MaxY + 1) * 32
-    rec.Top = 0
-    rec.Left = 0
-    rec.Bottom = (Map.MaxX + 1) * 32
-    rec.Right = (Map.MaxY + 1) * 32
-    SavePicture frmMain.picSSMap.Image, App.Path & "\map" & GetPlayerMap(MyIndex) & ".jpg"
-    
-    ' let them know we did it
-    AddText "Screenshot of map #" & GetPlayerMap(MyIndex) & " saved.", BrightGreen
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ScreenshotMap", "modGraphics", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
+    'get display dimensions
+    Direct3D_Device.GetDisplayMode Direct3D_Display_Mode
+
+    'create a surface to put front buffer on,
+    'GetFrontBuffer always returns D3DFMT_A8R8G8B8
+    Set Surface = Direct3D_Device.CreateImageSurface(ScreenX, ScreenY, D3DFMT_A8R8G8B8)
+
+    'get data from front buffer
+    Direct3D_Device.GetFrontBuffer Surface
+
+    'we are saving entire area of this surface
+    With SrcRec
+        .Left = 0
+        .Right = ScreenX
+        .Top = 0
+        .Bottom = ScreenY
+    End With
+
+    'save this surface to a BMP file
+    Direct3DX.SaveSurfaceToFile File_Path, D3DXIFF_BMP, Surface, SrcPalette, SrcRec
+
+'Unload all of the DirectX objects
+Set Surface = Nothing
 End Sub
 
-Public Sub DrawMapResource(ByVal Resource_num As Long, Optional ByVal screenShot As Boolean = False)
+
+Public Sub DrawMapResource(ByVal Resource_num As Long, Optional ByVal ScreenShot As Boolean = False)
 Dim Resource_master As Long
 Dim Resource_state As Long
 Dim Resource_sprite As Long
-Dim rec As RECT
+Dim Rec As RECT
 Dim x As Long, y As Long
     
     ' If debug mode, handle error then exit out
@@ -987,7 +925,7 @@ Dim x As Long, y As Long
     End If
 
     ' src rect
-    With rec
+    With Rec
         .Top = 0
         .Bottom = Tex_Resource(Resource_sprite).Height
         .Left = 0
@@ -999,10 +937,10 @@ Dim x As Long, y As Long
     y = (MapResource(Resource_num).y * PIC_Y) - Tex_Resource(Resource_sprite).Height + 32
     
     ' render it
-    If Not screenShot Then
-        Call DrawResource(Resource_sprite, x, y, rec)
+    If Not ScreenShot Then
+        Call DrawResource(Resource_sprite, x, y, Rec)
     Else
-        Call ScreenshotResource(Resource_sprite, x, y, rec)
+        Call ScreenshotResource(Resource_sprite, x, y, Rec)
     End If
     
     ' Error handler
@@ -1013,7 +951,7 @@ errorhandler:
     Exit Sub
 End Sub
 
-Private Sub DrawResource(ByVal Resource As Long, ByVal dX As Long, dY As Long, rec As RECT)
+Private Sub DrawResource(ByVal Resource As Long, ByVal dX As Long, dY As Long, Rec As RECT)
 Dim x As Long
 Dim y As Long
 Dim Width As Long
@@ -1028,10 +966,10 @@ Dim destRect As RECT
     x = ConvertMapX(dX)
     y = ConvertMapY(dY)
     
-    Width = (rec.Right - rec.Left)
-    Height = (rec.Bottom - rec.Top)
+    Width = (Rec.Right - Rec.Left)
+    Height = (Rec.Bottom - Rec.Top)
     
-    RenderTexture Tex_Resource(Resource), x, y, rec.Left, rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, D3DColorRGBA(255, 255, 255, 255)
+    RenderTexture Tex_Resource(Resource), x, y, Rec.Left, Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, D3DColorRGBA(255, 255, 255, 255)
     
     ' Error handler
     Exit Sub
@@ -1041,7 +979,7 @@ errorhandler:
     Exit Sub
 End Sub
 
-Private Sub ScreenshotResource(ByVal Resource As Long, ByVal x As Long, y As Long, rec As RECT)
+Private Sub ScreenshotResource(ByVal Resource As Long, ByVal x As Long, y As Long, Rec As RECT)
 Dim Width As Long
 Dim Height As Long
 Dim destRect As RECT
@@ -1051,23 +989,23 @@ Dim destRect As RECT
 
     If Resource < 1 Or Resource > NumResources Then Exit Sub
     
-    Width = (rec.Right - rec.Left)
-    Height = (rec.Bottom - rec.Top)
+    Width = (Rec.Right - Rec.Left)
+    Height = (Rec.Bottom - Rec.Top)
 
     If y < 0 Then
-        With rec
+        With Rec
             .Top = .Top - y
         End With
         y = 0
     End If
 
     If x < 0 Then
-        With rec
+        With Rec
             .Left = .Left - x
         End With
         x = 0
     End If
-    RenderTexture Tex_Resource(Resource), x, y, rec.Left, rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, D3DColorRGBA(255, 255, 255, 255)
+    RenderTexture Tex_Resource(Resource), x, y, Rec.Left, Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, D3DColorRGBA(255, 255, 255, 255)
     
     ' Error handler
     Exit Sub
@@ -1317,7 +1255,7 @@ End Sub
 Public Sub DrawPlayer(ByVal Index As Long)
 Dim anim As Byte, i As Long, x As Long, y As Long
 Dim Sprite As Long, spritetop As Long
-Dim rec As RECT
+Dim Rec As RECT
 Dim attackspeed As Long
     
     ' If debug mode, handle error then exit out
@@ -1380,7 +1318,7 @@ Dim attackspeed As Long
             spritetop = 1
     End Select
 
-    With rec
+    With Rec
         .Top = spritetop * (Tex_Character(Sprite).Height / 4)
         .Bottom = .Top + (Tex_Character(Sprite).Height / 4)
         .Left = anim * (Tex_Character(Sprite).Width / 4)
@@ -1400,7 +1338,7 @@ Dim attackspeed As Long
     End If
 
     ' render the actual sprite
-    Call DrawSprite(Sprite, x, y, rec)
+    Call DrawSprite(Sprite, x, y, Rec)
     
     ' check for paperdolling
     For i = 1 To UBound(PaperdollOrder)
@@ -1421,7 +1359,7 @@ End Sub
 
 Public Sub DrawNpc(ByVal MapNpcNum As Long)
 Dim anim As Byte, i As Long, x As Long, y As Long, Sprite As Long, spritetop As Long
-Dim rec As RECT
+Dim Rec As RECT
 Dim attackspeed As Long
     
     ' If debug mode, handle error then exit out
@@ -1476,7 +1414,7 @@ Dim attackspeed As Long
             spritetop = 1
     End Select
 
-    With rec
+    With Rec
         .Top = (Tex_Character(Sprite).Height / 4) * spritetop
         .Bottom = .Top + Tex_Character(Sprite).Height / 4
         .Left = anim * (Tex_Character(Sprite).Width / 4)
@@ -1495,7 +1433,7 @@ Dim attackspeed As Long
         y = MapNpc(MapNpcNum).y * PIC_Y + MapNpc(MapNpcNum).yOffset
     End If
 
-    Call DrawSprite(Sprite, x, y, rec)
+    Call DrawSprite(Sprite, x, y, Rec)
     
     ' Error handler
     Exit Sub
@@ -1506,7 +1444,7 @@ errorhandler:
 End Sub
 
 Public Sub DrawPaperdoll(ByVal x2 As Long, ByVal y2 As Long, ByVal Sprite As Long, ByVal anim As Long, ByVal spritetop As Long)
-Dim rec As RECT
+Dim Rec As RECT
 Dim x As Long, y As Long
 Dim Width As Long, Height As Long
     
@@ -1515,7 +1453,7 @@ Dim Width As Long, Height As Long
 
     If Sprite < 1 Or Sprite > NumPaperdolls Then Exit Sub
     
-    With rec
+    With Rec
         .Top = spritetop * (Tex_Paperdoll(Sprite).Height / 4)
         .Bottom = .Top + (Tex_Paperdoll(Sprite).Height / 4)
         .Left = anim * (Tex_Paperdoll(Sprite).Width / 4)
@@ -1525,25 +1463,25 @@ Dim Width As Long, Height As Long
     ' clipping
     x = ConvertMapX(x2)
     y = ConvertMapY(y2)
-    Width = (rec.Right - rec.Left)
-    Height = (rec.Bottom - rec.Top)
+    Width = (Rec.Right - Rec.Left)
+    Height = (Rec.Bottom - Rec.Top)
 
     ' Clip to screen
     If y < 0 Then
-        With rec
+        With Rec
             .Top = .Top - y
         End With
         y = 0
     End If
 
     If x < 0 Then
-        With rec
+        With Rec
             .Left = .Left - x
         End With
         x = 0
     End If
     
-    RenderTexture Tex_Paperdoll(Sprite), x, y, rec.Left, rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, D3DColorRGBA(255, 255, 255, 255)
+    RenderTexture Tex_Paperdoll(Sprite), x, y, Rec.Left, Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, D3DColorRGBA(255, 255, 255, 255)
     
     ' Error handler
     Exit Sub
@@ -1553,7 +1491,7 @@ errorhandler:
     Exit Sub
 End Sub
 
-Private Sub DrawSprite(ByVal Sprite As Long, ByVal x2 As Long, y2 As Long, rec As RECT)
+Private Sub DrawSprite(ByVal Sprite As Long, ByVal x2 As Long, y2 As Long, Rec As RECT)
 Dim x As Long
 Dim y As Long
 Dim Width As Long
@@ -1565,10 +1503,10 @@ Dim Height As Long
     If Sprite < 1 Or Sprite > NumCharacters Then Exit Sub
     x = ConvertMapX(x2)
     y = ConvertMapY(y2)
-    Width = (rec.Right - rec.Left)
-    Height = (rec.Bottom - rec.Top)
+    Width = (Rec.Right - Rec.Left)
+    Height = (Rec.Bottom - Rec.Top)
     
-    RenderTexture Tex_Character(Sprite), x, y, rec.Left, rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, D3DColorRGBA(255, 255, 255, 255)
+    RenderTexture Tex_Character(Sprite), x, y, Rec.Left, Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, D3DColorRGBA(255, 255, 255, 255)
     
     ' Error handler
     Exit Sub
@@ -1637,7 +1575,7 @@ Dim itemnum As Long, itempic As Long
 Dim x As Long, y As Long
 Dim MaxFrames As Byte
 Dim Amount As Long
-Dim rec As RECT, rec_pos As RECT
+Dim Rec As RECT, rec_pos As RECT
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -1678,7 +1616,7 @@ Dim rec As RECT, rec_pos As RECT
                         InvItemFrame(i) = 1
                     End If
 
-                    With rec
+                    With Rec
                         .Top = 0
                         .Bottom = 32
                         .Left = (Tex_Item(itempic).Width / 2) + (InvItemFrame(i) * 32) ' middle to get the start of inv gfx, then +32 for each frame
@@ -1693,7 +1631,7 @@ Dim rec As RECT, rec_pos As RECT
                     End With
 
                     ' We'll now re-Draw the item, and place the currency value over it again :P
-                    RenderTextureByRects Tex_Item(itempic), rec, rec_pos
+                    RenderTextureByRects Tex_Item(itempic), Rec, rec_pos
 
                     ' If item is a stack - draw the amount you have
                     If GetPlayerInvItemValue(MyIndex, i) >= 1 Then
@@ -1724,7 +1662,7 @@ errorhandler:
 End Sub
 
 Sub DrawFace()
-Dim rec As RECT, rec_pos As RECT, faceNum As Long, srcRect As D3DRECT
+Dim Rec As RECT, rec_pos As RECT, faceNum As Long, SrcRect As D3DRECT
     
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -1738,7 +1676,7 @@ Dim rec As RECT, rec_pos As RECT, faceNum As Long, srcRect As D3DRECT
     Direct3D_Device.Clear 0, ByVal 0, D3DCLEAR_TARGET, D3DColorRGBA(0, 0, 0, 0), 1#, 0
     Direct3D_Device.BeginScene
 
-    With rec
+    With Rec
         .Top = 0
         .Bottom = 100
         .Left = 0
@@ -1752,15 +1690,15 @@ Dim rec As RECT, rec_pos As RECT, faceNum As Long, srcRect As D3DRECT
         .Right = 100
     End With
 
-    RenderTextureByRects Tex_Face(faceNum), rec, rec_pos
-    With srcRect
+    RenderTextureByRects Tex_Face(faceNum), Rec, rec_pos
+    With SrcRect
         .x1 = 0
         .x2 = frmMain.picFace.Width
         .y1 = 0
         .y2 = frmMain.picFace.Height
     End With
     Direct3D_Device.EndScene
-    Direct3D_Device.Present srcRect, srcRect, frmMain.picFace.hwnd, ByVal (0)
+    Direct3D_Device.Present SrcRect, SrcRect, frmMain.picFace.hwnd, ByVal (0)
     
     ' Error handler
     Exit Sub
@@ -1772,7 +1710,7 @@ End Sub
 
 Sub DrawEquipment()
 Dim i As Long, itemnum As Long, itempic As Long
-Dim rec As RECT, rec_pos As RECT, srcRect As D3DRECT, destRect As D3DRECT
+Dim Rec As RECT, rec_pos As RECT, SrcRect As D3DRECT, destRect As D3DRECT
     
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -1786,7 +1724,7 @@ Dim rec As RECT, rec_pos As RECT, srcRect As D3DRECT, destRect As D3DRECT
         If itemnum > 0 Then
             itempic = Item(itemnum).Pic
 
-            With rec
+            With Rec
                 .Top = 0
                 .Bottom = 32
                 .Left = 32
@@ -1801,15 +1739,15 @@ Dim rec As RECT, rec_pos As RECT, srcRect As D3DRECT, destRect As D3DRECT
             End With
             Direct3D_Device.Clear 0, ByVal 0, D3DCLEAR_TARGET, D3DColorRGBA(0, 0, 0, 0), 1#, 0
             Direct3D_Device.BeginScene
-            RenderTextureByRects Tex_Item(itempic), rec, rec_pos
+            RenderTextureByRects Tex_Item(itempic), Rec, rec_pos
             Direct3D_Device.EndScene
-            With srcRect
+            With SrcRect
                 .x1 = rec_pos.Left
                 .x2 = rec_pos.Right
                 .y1 = rec_pos.Top
                 .y2 = rec_pos.Bottom
             End With
-            Direct3D_Device.Present srcRect, srcRect, frmMain.picCharacter.hwnd, ByVal (0)
+            Direct3D_Device.Present SrcRect, SrcRect, frmMain.picCharacter.hwnd, ByVal (0)
         End If
     Next
     
@@ -1825,7 +1763,7 @@ End Sub
 Sub DrawInventory()
 Dim i As Long, x As Long, y As Long, itemnum As Long, itempic As Long
 Dim Amount As Long
-Dim rec As RECT, rec_pos As RECT, srcRect As D3DRECT, destRect As D3DRECT
+Dim Rec As RECT, rec_pos As RECT, SrcRect As D3DRECT, destRect As D3DRECT
 Dim colour As Long
 Dim tmpItem As Long, amountModifier As Long
 
@@ -1869,7 +1807,7 @@ Dim tmpItem As Long, amountModifier As Long
             If itempic > 0 And itempic <= numitems Then
                 If Tex_Item(itempic).Width <= 64 Then ' more than 1 frame is handled by anim sub
 
-                    With rec
+                    With Rec
                         .Top = 0
                         .Bottom = 32
                         .Left = 32
@@ -1883,7 +1821,7 @@ Dim tmpItem As Long, amountModifier As Long
                         .Right = .Left + PIC_X
                     End With
 
-                    RenderTextureByRects Tex_Item(itempic), rec, rec_pos
+                    RenderTextureByRects Tex_Item(itempic), Rec, rec_pos
 
                     ' If item is a stack - draw the amount you have
                     If GetPlayerInvItemValue(MyIndex, i) >= 1 Then
@@ -1915,7 +1853,7 @@ NextLoop:
     'update animated items
     DrawAnimatedInvItems
     
-    With srcRect
+    With SrcRect
         .x1 = 0
         .x2 = frmMain.picInventory.Width
         .y1 = 28
@@ -1930,7 +1868,7 @@ NextLoop:
     End With
     
     Direct3D_Device.EndScene
-    Direct3D_Device.Present srcRect, destRect, frmMain.picInventory.hwnd, ByVal (0)
+    Direct3D_Device.Present SrcRect, destRect, frmMain.picInventory.hwnd, ByVal (0)
     
     ' Error handler
     Exit Sub
@@ -1941,9 +1879,9 @@ errorhandler:
 End Sub
 
 Sub DrawTrade()
-Dim i As Long, x As Long, y As Long, itemnum As Long, itempic As Long, srcRect As D3DRECT, destRect As D3DRECT
+Dim i As Long, x As Long, y As Long, itemnum As Long, itempic As Long, SrcRect As D3DRECT, destRect As D3DRECT
 Dim Amount As Long
-Dim rec As RECT, rec_pos As RECT
+Dim Rec As RECT, rec_pos As RECT
 Dim colour As Long
 
     ' If debug mode, handle error then exit out
@@ -1961,7 +1899,7 @@ Dim colour As Long
             itempic = Item(itemnum).Pic
 
             If itempic > 0 And itempic <= numitems Then
-                With rec
+                With Rec
                     .Top = 0
                     .Bottom = 32
                     .Left = 32
@@ -1975,7 +1913,7 @@ Dim colour As Long
                     .Right = .Left + PIC_X
                 End With
 
-                RenderTextureByRects Tex_Item(itempic), rec, rec_pos
+                RenderTextureByRects Tex_Item(itempic), Rec, rec_pos
 
                 ' If item is a stack - draw the amount you have
                 If TradeYourOffer(i).value > 1 Then
@@ -1998,7 +1936,7 @@ Dim colour As Long
         End If
     Next
     
-    With srcRect
+    With SrcRect
         .x1 = 0
         .x2 = .x1 + 193
         .y1 = 0
@@ -2013,7 +1951,7 @@ Dim colour As Long
     End With
                     
     Direct3D_Device.EndScene
-    Direct3D_Device.Present srcRect, destRect, frmMain.picYourTrade.hwnd, ByVal (0)
+    Direct3D_Device.Present SrcRect, destRect, frmMain.picYourTrade.hwnd, ByVal (0)
     
     
     Direct3D_Device.Clear 0, ByVal 0, D3DCLEAR_TARGET, D3DColorRGBA(0, 0, 0, 0), 1#, 0
@@ -2026,7 +1964,7 @@ Dim colour As Long
             itempic = Item(itemnum).Pic
 
             If itempic > 0 And itempic <= numitems Then
-                With rec
+                With Rec
                     .Top = 0
                     .Bottom = 32
                     .Left = 32
@@ -2040,7 +1978,7 @@ Dim colour As Long
                     .Right = .Left + PIC_X
                 End With
                 
-                RenderTextureByRects Tex_Item(itempic), rec, rec_pos
+                RenderTextureByRects Tex_Item(itempic), Rec, rec_pos
 
                 ' If item is a stack - draw the amount you have
                 If TradeTheirOffer(i).value > 1 Then
@@ -2062,7 +2000,7 @@ Dim colour As Long
         End If
     Next
     
-    With srcRect
+    With SrcRect
         .x1 = 0
         .x2 = .x1 + 193
         .y1 = 0
@@ -2077,7 +2015,7 @@ Dim colour As Long
     End With
                     
     Direct3D_Device.EndScene
-    Direct3D_Device.Present srcRect, destRect, frmMain.picTheirTrade.hwnd, ByVal (0)
+    Direct3D_Device.Present SrcRect, destRect, frmMain.picTheirTrade.hwnd, ByVal (0)
     
     ' Error handler
     Exit Sub
@@ -2088,9 +2026,9 @@ errorhandler:
 End Sub
 
 Sub DrawPlayerSpells()
-Dim i As Long, x As Long, y As Long, spellnum As Long, spellicon As Long, srcRect As D3DRECT, destRect As D3DRECT
+Dim i As Long, x As Long, y As Long, spellnum As Long, spellicon As Long, SrcRect As D3DRECT, destRect As D3DRECT
 Dim Amount As String
-Dim rec As RECT, rec_pos As RECT
+Dim Rec As RECT, rec_pos As RECT
 Dim colour As Long
 
     ' If debug mode, handle error then exit out
@@ -2110,7 +2048,7 @@ Dim colour As Long
 
             If spellicon > 0 And spellicon <= NumSpellIcons Then
             
-                With rec
+                With Rec
                     .Top = 0
                     .Bottom = 32
                     .Left = 0
@@ -2118,8 +2056,8 @@ Dim colour As Long
                 End With
                 
                 If Not SpellCD(i) = 0 Then
-                    rec.Left = 32
-                    rec.Right = 64
+                    Rec.Left = 32
+                    Rec.Right = 64
                 End If
 
                 With rec_pos
@@ -2129,12 +2067,12 @@ Dim colour As Long
                     .Right = .Left + PIC_X
                 End With
 
-                RenderTextureByRects Tex_SpellIcon(spellicon), rec, rec_pos
+                RenderTextureByRects Tex_SpellIcon(spellicon), Rec, rec_pos
             End If
         End If
     Next
     
-    With srcRect
+    With SrcRect
         .x1 = 0
         .x2 = frmMain.picSpells.Width
         .y1 = 28
@@ -2149,7 +2087,7 @@ Dim colour As Long
     End With
     
     Direct3D_Device.EndScene
-    Direct3D_Device.Present srcRect, destRect, frmMain.picSpells.hwnd, ByVal (0)
+    Direct3D_Device.Present SrcRect, destRect, frmMain.picSpells.hwnd, ByVal (0)
     
     ' Error handler
     Exit Sub
@@ -2160,9 +2098,9 @@ errorhandler:
 End Sub
 
 Sub DrawShop()
-Dim i As Long, x As Long, y As Long, itemnum As Long, itempic As Long, srcRect As D3DRECT, destRect As D3DRECT
+Dim i As Long, x As Long, y As Long, itemnum As Long, itempic As Long, SrcRect As D3DRECT, destRect As D3DRECT
 Dim Amount As String
-Dim rec As RECT, rec_pos As RECT
+Dim Rec As RECT, rec_pos As RECT
 Dim colour As Long
 
     ' If debug mode, handle error then exit out
@@ -2179,7 +2117,7 @@ Dim colour As Long
             itempic = Item(itemnum).Pic
             If itempic > 0 And itempic <= numitems Then
             
-                With rec
+                With Rec
                     .Top = 0
                     .Bottom = 32
                     .Left = 32
@@ -2193,7 +2131,7 @@ Dim colour As Long
                     .Right = .Left + PIC_X
                 End With
                 
-                RenderTextureByRects Tex_Item(itempic), rec, rec_pos
+                RenderTextureByRects Tex_Item(itempic), Rec, rec_pos
                 
                 ' If item is a stack - draw the amount you have
                 If Shop(InShop).TradeItem(i).ItemValue > 1 Then
@@ -2215,7 +2153,7 @@ Dim colour As Long
         End If
     Next
     
-    With srcRect
+    With SrcRect
         .x1 = ShopLeft
         .x2 = .x1 + 192
         .y1 = ShopTop
@@ -2230,7 +2168,7 @@ Dim colour As Long
     End With
                 
     Direct3D_Device.EndScene
-    Direct3D_Device.Present srcRect, destRect, frmMain.picShopItems.hwnd, ByVal (0)
+    Direct3D_Device.Present SrcRect, destRect, frmMain.picShopItems.hwnd, ByVal (0)
     
     ' Error handler
     Exit Sub
@@ -2241,7 +2179,7 @@ errorhandler:
 End Sub
 
 Public Sub DrawInventoryItem(ByVal x As Long, ByVal y As Long)
-Dim rec As RECT, rec_pos As RECT, srcRect As D3DRECT, destRect As D3DRECT
+Dim Rec As RECT, rec_pos As RECT, SrcRect As D3DRECT, destRect As D3DRECT
 Dim itemnum As Long, itempic As Long
 
     ' If debug mode, handle error then exit out
@@ -2257,7 +2195,7 @@ Dim itemnum As Long, itempic As Long
         Direct3D_Device.Clear 0, ByVal 0, D3DCLEAR_TARGET, D3DColorRGBA(0, 0, 0, 255), 1#, 0
         Direct3D_Device.BeginScene
         
-        With rec
+        With Rec
             .Top = 0
             .Bottom = .Top + PIC_Y
             .Left = Tex_Item(itempic).Width / 2
@@ -2271,7 +2209,7 @@ Dim itemnum As Long, itempic As Long
             .Right = .Left + PIC_X
         End With
 
-        RenderTextureByRects Tex_Item(itempic), rec, rec_pos
+        RenderTextureByRects Tex_Item(itempic), Rec, rec_pos
 
         With frmMain.picTempInv
             .Top = y
@@ -2279,7 +2217,7 @@ Dim itemnum As Long, itempic As Long
             .Visible = True
             .ZOrder (0)
         End With
-        With srcRect
+        With SrcRect
             .x1 = 0
             .x2 = 32
             .y1 = 0
@@ -2292,7 +2230,7 @@ Dim itemnum As Long, itempic As Long
             .x2 = .x1 + 32
         End With
         Direct3D_Device.EndScene
-        Direct3D_Device.Present srcRect, destRect, frmMain.picTempInv.hwnd, ByVal (0)
+        Direct3D_Device.Present SrcRect, destRect, frmMain.picTempInv.hwnd, ByVal (0)
     End If
 
     ' Error handler
@@ -2304,7 +2242,7 @@ errorhandler:
 End Sub
 
 Public Sub DrawDraggedSpell(ByVal x As Long, ByVal y As Long)
-Dim rec As RECT, rec_pos As RECT, srcRect As D3DRECT, destRect As D3DRECT
+Dim Rec As RECT, rec_pos As RECT, SrcRect As D3DRECT, destRect As D3DRECT
 Dim spellnum As Long, spellpic As Long
 
     ' If debug mode, handle error then exit out
@@ -2320,7 +2258,7 @@ Dim spellnum As Long, spellpic As Long
         Direct3D_Device.Clear 0, ByVal 0, D3DCLEAR_TARGET, D3DColorRGBA(0, 0, 0, 0), 1#, 0
         Direct3D_Device.BeginScene
 
-        With rec
+        With Rec
             .Top = 0
             .Bottom = .Top + PIC_Y
             .Left = 0
@@ -2334,7 +2272,7 @@ Dim spellnum As Long, spellpic As Long
             .Right = .Left + PIC_X
         End With
 
-        RenderTextureByRects Tex_SpellIcon(spellpic), rec, rec_pos
+        RenderTextureByRects Tex_SpellIcon(spellpic), Rec, rec_pos
 
         With frmMain.picTempSpell
             .Top = y
@@ -2343,7 +2281,7 @@ Dim spellnum As Long, spellpic As Long
             .ZOrder (0)
         End With
         
-        With srcRect
+        With SrcRect
             .x1 = 0
             .x2 = 32
             .y1 = 0
@@ -2356,7 +2294,7 @@ Dim spellnum As Long, spellpic As Long
             .x2 = .x1 + 32
         End With
         Direct3D_Device.EndScene
-        Direct3D_Device.Present srcRect, destRect, frmMain.picTempSpell.hwnd, ByVal (0)
+        Direct3D_Device.Present SrcRect, destRect, frmMain.picTempSpell.hwnd, ByVal (0)
     End If
     
     ' Error handler
@@ -2368,7 +2306,7 @@ errorhandler:
 End Sub
 
 Public Sub DrawItemDesc(ByVal itemnum As Long)
-Dim rec As RECT, rec_pos As RECT, srcRect As D3DRECT, destRect As D3DRECT
+Dim Rec As RECT, rec_pos As RECT, SrcRect As D3DRECT, destRect As D3DRECT
 Dim itempic As Long
 
     ' If debug mode, handle error then exit out
@@ -2384,7 +2322,7 @@ Dim itempic As Long
         Direct3D_Device.Clear 0, ByVal 0, D3DCLEAR_TARGET, D3DColorRGBA(0, 0, 0, 0), 1#, 0
         Direct3D_Device.BeginScene
 
-        With rec
+        With Rec
             .Top = 0
             .Bottom = .Top + PIC_Y
             .Left = Tex_Item(itempic).Width / 2
@@ -2397,7 +2335,7 @@ Dim itempic As Long
             .Left = 0
             .Right = 64
         End With
-        RenderTextureByRects Tex_Item(itempic), rec, rec_pos
+        RenderTextureByRects Tex_Item(itempic), Rec, rec_pos
 
         With destRect
             .x1 = 0
@@ -2419,7 +2357,7 @@ errorhandler:
 End Sub
 
 Public Sub DrawSpellDesc(ByVal spellnum As Long)
-Dim rec As RECT, rec_pos As RECT, srcRect As D3DRECT, destRect As D3DRECT
+Dim Rec As RECT, rec_pos As RECT, SrcRect As D3DRECT, destRect As D3DRECT
 Dim spellpic As Long
 
     ' If debug mode, handle error then exit out
@@ -2435,7 +2373,7 @@ Dim spellpic As Long
         Direct3D_Device.Clear 0, ByVal 0, D3DCLEAR_TARGET, D3DColorRGBA(0, 0, 0, 0), 1#, 0
         Direct3D_Device.BeginScene
 
-        With rec
+        With Rec
             .Top = 0
             .Bottom = .Top + PIC_Y
             .Left = 0
@@ -2448,7 +2386,7 @@ Dim spellpic As Long
             .Left = 0
             .Right = 64
         End With
-        RenderTextureByRects Tex_SpellIcon(spellpic), rec, rec_pos
+        RenderTextureByRects Tex_SpellIcon(spellpic), Rec, rec_pos
 
         With destRect
             .x1 = 0
@@ -2473,7 +2411,7 @@ End Sub
 ' ** Game Editors **
 ' ******************
 Public Sub EditorMap_DrawTileset()
-Dim Height As Long, srcRect As D3DRECT, destRect As D3DRECT
+Dim Height As Long, SrcRect As D3DRECT, destRect As D3DRECT
 Dim Width As Long
 Dim Tileset As Long
 Dim sRect As RECT
@@ -2539,7 +2477,7 @@ Dim dRect As RECT, scrlX As Long, scrlY As Long
     
     DrawSelectionBox destRect
         
-    With srcRect
+    With SrcRect
         .x1 = 0
         .x2 = Width
         .y1 = 0
@@ -2586,21 +2524,21 @@ Dim Width As Long, Height As Long, x As Long, y As Long
 End Sub
 
 Public Sub DrawTileOutline()
-Dim rec As RECT
+Dim Rec As RECT
     
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If frmEditor_Map.optBlock.value Then Exit Sub
 
-    With rec
+    With Rec
         .Top = 0
         .Bottom = .Top + PIC_Y
         .Left = 0
         .Right = .Left + PIC_X
     End With
 
-    RenderTexture Tex_Misc, ConvertMapX(CurX * PIC_X), ConvertMapY(CurY * PIC_Y), rec.Left, rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, rec.Right - rec.Left, rec.Bottom - rec.Top, D3DColorRGBA(255, 255, 255, 255)
+    RenderTexture Tex_Misc, ConvertMapX(CurX * PIC_X), ConvertMapY(CurY * PIC_Y), Rec.Left, Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, Rec.Right - Rec.Left, Rec.Bottom - Rec.Top, D3DColorRGBA(255, 255, 255, 255)
     
     ' Error handler
     Exit Sub
@@ -2611,7 +2549,7 @@ errorhandler:
 End Sub
 
 Public Sub NewCharacterDrawSprite()
-Dim Sprite As Long, srcRect As D3DRECT, destRect As D3DRECT
+Dim Sprite As Long, SrcRect As D3DRECT, destRect As D3DRECT
 Dim sRect As RECT
 Dim dRect As RECT
 Dim Width As Long, Height As Long
@@ -2653,7 +2591,7 @@ Dim Width As Long, Height As Long
     
     RenderTextureByRects Tex_Character(Sprite), sRect, dRect
     
-    With srcRect
+    With SrcRect
         .x1 = 0
         .x2 = Width
         .y1 = 0
@@ -2668,7 +2606,7 @@ Dim Width As Long, Height As Long
     End With
                     
     Direct3D_Device.EndScene
-    Direct3D_Device.Present srcRect, destRect, frmMenu.picSprite.hwnd, ByVal (0)
+    Direct3D_Device.Present SrcRect, destRect, frmMenu.picSprite.hwnd, ByVal (0)
     
     ' Error handler
     Exit Sub
@@ -2815,7 +2753,7 @@ errorhandler:
 End Sub
 
 Public Sub GEditorItem_DrawPaperdoll()
-Dim Sprite As Long, srcRect As D3DRECT, destRect As D3DRECT
+Dim Sprite As Long, SrcRect As D3DRECT, destRect As D3DRECT
 Dim sRect As RECT
 Dim dRect As RECT
     
@@ -2910,7 +2848,7 @@ Dim Animationnum As Long
 Dim sRect As RECT
 Dim dRect As RECT
 Dim i As Long
-Dim Width As Long, Height As Long, srcRect As D3DRECT, destRect As D3DRECT
+Dim Width As Long, Height As Long, SrcRect As D3DRECT, destRect As D3DRECT
 Dim looptime As Long
 Dim FrameCount As Long
 Dim ShouldRender As Boolean
@@ -2963,7 +2901,7 @@ Dim ShouldRender As Boolean
                     
                     RenderTextureByRects Tex_Animation(Animationnum), sRect, dRect
                     
-                    With srcRect
+                    With SrcRect
                         .x1 = 0
                         .x2 = frmEditor_Animation.picSprite(i).Width
                         .y1 = 0
@@ -2978,7 +2916,7 @@ Dim ShouldRender As Boolean
                     End With
                                 
                     Direct3D_Device.EndScene
-                    Direct3D_Device.Present srcRect, destRect, frmEditor_Animation.picSprite(i).hwnd, ByVal (0)
+                    Direct3D_Device.Present SrcRect, destRect, frmEditor_Animation.picSprite(i).hwnd, ByVal (0)
                 End If
             End If
         End If
@@ -3040,7 +2978,7 @@ End Sub
 
 Public Sub GEditorResource_DrawSprite()
 Dim Sprite As Long
-Dim sRect As RECT, destRect As D3DRECT, srcRect As D3DRECT
+Dim sRect As RECT, destRect As D3DRECT, SrcRect As D3DRECT
 Dim dRect As RECT
     
     ' If debug mode, handle error then exit out
@@ -3063,7 +3001,7 @@ Dim dRect As RECT
         Direct3D_Device.Clear 0, ByVal 0, D3DCLEAR_TARGET, D3DColorRGBA(0, 0, 0, 0), 1#, 0
         Direct3D_Device.BeginScene
         RenderTextureByRects Tex_Resource(Sprite), sRect, dRect
-        With srcRect
+        With SrcRect
             .x1 = 0
             .x2 = Tex_Resource(Sprite).Width
             .y1 = 0
@@ -3078,7 +3016,7 @@ Dim dRect As RECT
         End With
                     
         Direct3D_Device.EndScene
-        Direct3D_Device.Present srcRect, destRect, frmEditor_Resource.picNormalPic.hwnd, ByVal (0)
+        Direct3D_Device.Present SrcRect, destRect, frmEditor_Resource.picNormalPic.hwnd, ByVal (0)
     End If
 
     ' exhausted sprite
@@ -3106,7 +3044,7 @@ Dim dRect As RECT
             .y2 = frmEditor_Resource.picExhaustedPic.ScaleHeight
         End With
         
-        With srcRect
+        With SrcRect
             .x1 = 0
             .x2 = Tex_Resource(Sprite).Width
             .y1 = 0
@@ -3114,7 +3052,7 @@ Dim dRect As RECT
         End With
                     
         Direct3D_Device.EndScene
-        Direct3D_Device.Present srcRect, destRect, frmEditor_Resource.picExhaustedPic.hwnd, ByVal (0)
+        Direct3D_Device.Present SrcRect, destRect, frmEditor_Resource.picExhaustedPic.hwnd, ByVal (0)
     End If
     
     ' Error handler
@@ -3129,8 +3067,8 @@ Public Sub Render_Graphics()
 Dim x As Long
 Dim y As Long
 Dim i As Long
-Dim rec As RECT
-Dim rec_pos As RECT, srcRect As D3DRECT
+Dim Rec As RECT
+Dim rec_pos As RECT, SrcRect As D3DRECT
     
     ' If debug mode, handle error then exit out
    On Error GoTo errorhandler
@@ -3327,7 +3265,7 @@ Dim rec_pos As RECT, srcRect As D3DRECT
             If DrawThunder > 0 Then RenderTexture Tex_White, 0, 0, 0, 0, frmMain.picScreen.ScaleWidth, frmMain.picScreen.ScaleHeight, 32, 32, D3DColorRGBA(255, 255, 255, 160): DrawThunder = DrawThunder - 1
             
             ' Get rec
-            With rec
+            With Rec
                 .Top = Camera.Top
                 .Bottom = .Top + ScreenY
                 .Left = Camera.Left
@@ -3340,7 +3278,7 @@ Dim rec_pos As RECT, srcRect As D3DRECT
                 .Right = ScreenX
             End With
                 
-            With srcRect
+            With SrcRect
                 .x1 = 0
                 .x2 = frmMain.picScreen.ScaleWidth
                 .y1 = 0
@@ -3406,7 +3344,7 @@ Dim rec_pos As RECT, srcRect As D3DRECT
         HandleDeviceLost
         Exit Sub
     Else
-        If InShop = False And InBank = False Then Direct3D_Device.Present srcRect, ByVal 0, 0, ByVal 0
+        If InShop = False And InBank = False Then Direct3D_Device.Present SrcRect, ByVal 0, 0, ByVal 0
         DrawGDI
     End If
 
@@ -3687,7 +3625,7 @@ errorhandler:
 End Sub
 
 Sub DrawBank()
-Dim i As Long, x As Long, y As Long, itemnum As Long, srcRect As D3DRECT, destRect As D3DRECT
+Dim i As Long, x As Long, y As Long, itemnum As Long, SrcRect As D3DRECT, destRect As D3DRECT
 Dim Amount As String
 Dim sRect As RECT, dRect As RECT
 Dim Sprite As Long, colour As Long
@@ -3744,7 +3682,7 @@ Dim Sprite As Long, colour As Long
             End If
         Next
         
-        With srcRect
+        With SrcRect
             .x1 = BankLeft
             .x2 = .x1 + 400
             .y1 = BankTop
@@ -3759,7 +3697,7 @@ Dim Sprite As Long, colour As Long
         End With
                     
         Direct3D_Device.EndScene
-        Direct3D_Device.Present srcRect, destRect, frmMain.picBank.hwnd, ByVal (0)
+        Direct3D_Device.Present SrcRect, destRect, frmMain.picBank.hwnd, ByVal (0)
         'frmMain.picBank.Refresh
     End If
     
@@ -3772,7 +3710,7 @@ errorhandler:
 End Sub
 
 Public Sub DrawBankItem(ByVal x As Long, ByVal y As Long)
-Dim sRect As RECT, dRect As RECT, srcRect As D3DRECT, destRect As D3DRECT
+Dim sRect As RECT, dRect As RECT, SrcRect As D3DRECT, destRect As D3DRECT
 Dim itemnum As Long
 Dim Sprite As Long
     
@@ -3811,7 +3749,7 @@ Dim Sprite As Long
         .ZOrder (0)
     End With
     
-    With srcRect
+    With SrcRect
         .x1 = 0
         .x2 = 32
         .y1 = 0
@@ -3824,7 +3762,7 @@ Dim Sprite As Long
         .x2 = .x1 + 32
     End With
     Direct3D_Device.EndScene
-    Direct3D_Device.Present srcRect, destRect, frmMain.picTempBank.hwnd, ByVal (0)
+    Direct3D_Device.Present SrcRect, destRect, frmMain.picTempBank.hwnd, ByVal (0)
     
     ' Error handler
     Exit Sub
@@ -3924,7 +3862,7 @@ errorhandler:
 End Sub
 
 Public Sub EditorEvent_DrawGraphic()
-Dim sRect As RECT, destRect As D3DRECT, srcRect As D3DRECT
+Dim sRect As RECT, destRect As D3DRECT, SrcRect As D3DRECT
 Dim dRect As RECT
 
     ' If debug mode, handle error then exit out
@@ -3990,7 +3928,7 @@ Dim dRect As RECT
                     End If
                     DrawSelectionBox destRect
                     
-                    With srcRect
+                    With SrcRect
                         .x1 = dRect.Left
                         .x2 = frmEditor_Events.picGraphicSel.ScaleWidth
                         .y1 = dRect.Top
@@ -4003,7 +3941,7 @@ Dim dRect As RECT
                         .y2 = frmEditor_Events.picGraphicSel.ScaleHeight
                     End With
                     Direct3D_Device.EndScene
-                    Direct3D_Device.Present srcRect, destRect, frmEditor_Events.picGraphicSel.hwnd, ByVal (0)
+                    Direct3D_Device.Present SrcRect, destRect, frmEditor_Events.picGraphicSel.hwnd, ByVal (0)
                     
                     If GraphicSelX <= 3 And GraphicSelY <= 3 Then
                     Else
@@ -4068,7 +4006,7 @@ Dim dRect As RECT
                     
                     DrawSelectionBox destRect
                     
-                    With srcRect
+                    With SrcRect
                         .x1 = dRect.Left
                         .x2 = frmEditor_Events.picGraphicSel.ScaleWidth
                         .y1 = dRect.Top
@@ -4081,7 +4019,7 @@ Dim dRect As RECT
                         .y2 = frmEditor_Events.picGraphicSel.ScaleHeight
                     End With
                     Direct3D_Device.EndScene
-                    Direct3D_Device.Present srcRect, destRect, frmEditor_Events.picGraphicSel.hwnd, ByVal (0)
+                    Direct3D_Device.Present SrcRect, destRect, frmEditor_Events.picGraphicSel.hwnd, ByVal (0)
                 Else
                     frmEditor_Events.picGraphicSel.Cls
                     Exit Sub
