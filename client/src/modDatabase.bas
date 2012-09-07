@@ -183,8 +183,8 @@ End Sub
 Public Sub SaveMap(ByVal MapNum As Long)
 Dim filename As String
 Dim f As Long
-Dim x As Long
-Dim y As Long, i As Long, Z As Long, w As Long
+Dim X As Long
+Dim Y As Long, i As Long, Z As Long, w As Long
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -221,17 +221,17 @@ Dim y As Long, i As Long, Z As Long, w As Long
     Put #f, , Map.MaxX
     Put #f, , Map.MaxY
 
-    For x = 0 To Map.MaxX
-        For y = 0 To Map.MaxY
-            Put #f, , Map.Tile(x, y)
+    For X = 0 To Map.MaxX
+        For Y = 0 To Map.MaxY
+            Put #f, , Map.Tile(X, Y)
         Next
 
         DoEvents
     Next
 
-    For x = 1 To MAX_MAP_NPCS
-        Put #f, , Map.Npc(x)
-        Put #f, , Map.NpcSpawnType(x)
+    For X = 1 To MAX_MAP_NPCS
+        Put #f, , Map.Npc(X)
+        Put #f, , Map.NpcSpawnType(X)
     Next
     
 
@@ -250,8 +250,8 @@ End Sub
 Public Sub LoadMap(ByVal MapNum As Long)
 Dim filename As String
 Dim f As Long
-Dim x As Long
-Dim y As Long, i As Long, Z As Long, w As Long, p As Long
+Dim X As Long
+Dim Y As Long, i As Long, Z As Long, w As Long, p As Long
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -290,15 +290,15 @@ Dim y As Long, i As Long, Z As Long, w As Long, p As Long
     ' have to set the tile()
     ReDim Map.Tile(0 To Map.MaxX, 0 To Map.MaxY)
 
-    For x = 0 To Map.MaxX
-        For y = 0 To Map.MaxY
-            Get #f, , Map.Tile(x, y)
+    For X = 0 To Map.MaxX
+        For Y = 0 To Map.MaxY
+            Get #f, , Map.Tile(X, Y)
         Next
     Next
 
-    For x = 1 To MAX_MAP_NPCS
-        Get #f, , Map.Npc(x)
-        Get #f, , Map.NpcSpawnType(x)
+    For X = 1 To MAX_MAP_NPCS
+        Get #f, , Map.Npc(X)
+        Get #f, , Map.NpcSpawnType(X)
     Next
 
     Close #f
@@ -327,7 +327,7 @@ Dim i As Long
         ReDim Preserve Tex_Tileset(NumTileSets)
         NumTextures = NumTextures + 1
         ReDim Preserve gTexture(NumTextures)
-        Tex_Tileset(NumTileSets).filepath = App.Path & GFX_PATH & "tilesets\" & i & GFX_EXT
+        Tex_Tileset(NumTileSets).FilePath = App.Path & GFX_PATH & "tilesets\" & i & GFX_EXT
         Tex_Tileset(NumTileSets).Texture = NumTextures
         NumTileSets = NumTileSets + 1
         i = i + 1
@@ -336,6 +336,21 @@ Dim i As Long
     NumTileSets = NumTileSets - 1
     
     If NumTileSets = 0 Then Exit Sub
+
+    ' Error handler
+    Exit Sub
+errorhandler:
+    HandleError "CheckTilesets", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
+    Err.Clear
+    Exit Sub
+End Sub
+
+
+Public Sub LoadAllTilesets()
+Dim i As Long
+
+    ' If debug mode, handle error then exit out
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     For i = 1 To NumTileSets
         LoadTexture Tex_Tileset(i)
@@ -344,7 +359,7 @@ Dim i As Long
     ' Error handler
     Exit Sub
 errorhandler:
-    HandleError "CheckTilesets", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
+    HandleError "LoadAllTilesets", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
 End Sub
@@ -365,7 +380,7 @@ Dim i As Long
         ReDim Preserve Tex_Character(NumCharacters)
         NumTextures = NumTextures + 1
         ReDim Preserve gTexture(NumTextures)
-        Tex_Character(NumCharacters).filepath = App.Path & GFX_PATH & "characters\" & i & GFX_EXT
+        Tex_Character(NumCharacters).FilePath = App.Path & GFX_PATH & "characters\" & i & GFX_EXT
         Tex_Character(NumCharacters).Texture = NumTextures
         NumCharacters = NumCharacters + 1
         i = i + 1
@@ -402,7 +417,7 @@ Dim i As Long
         ReDim Preserve Tex_Paperdoll(NumPaperdolls)
         NumTextures = NumTextures + 1
         ReDim Preserve gTexture(NumTextures)
-        Tex_Paperdoll(NumPaperdolls).filepath = App.Path & GFX_PATH & "paperdolls\" & i & GFX_EXT
+        Tex_Paperdoll(NumPaperdolls).FilePath = App.Path & GFX_PATH & "paperdolls\" & i & GFX_EXT
         Tex_Paperdoll(NumPaperdolls).Texture = NumTextures
         NumPaperdolls = NumPaperdolls + 1
         i = i + 1
@@ -442,7 +457,7 @@ Dim i As Long
         NumTextures = NumTextures + 1
         ReDim Preserve gTexture(NumTextures)
         Tex_Animation(NumAnimations).Texture = NumTextures
-        Tex_Animation(NumAnimations).filepath = App.Path & GFX_PATH & "animations\" & i & GFX_EXT
+        Tex_Animation(NumAnimations).FilePath = App.Path & GFX_PATH & "animations\" & i & GFX_EXT
         NumAnimations = NumAnimations + 1
         i = i + 1
     Wend
@@ -477,7 +492,7 @@ Dim i As Long
         ReDim Preserve Tex_Item(numitems)
         NumTextures = NumTextures + 1
         ReDim Preserve gTexture(NumTextures)
-        Tex_Item(numitems).filepath = App.Path & GFX_PATH & "items\" & i & GFX_EXT
+        Tex_Item(numitems).FilePath = App.Path & GFX_PATH & "items\" & i & GFX_EXT
         Tex_Item(numitems).Texture = NumTextures
         numitems = numitems + 1
         i = i + 1
@@ -514,7 +529,7 @@ Dim i As Long
         ReDim Preserve Tex_Resource(NumResources)
         NumTextures = NumTextures + 1
         ReDim Preserve gTexture(NumTextures)
-        Tex_Resource(NumResources).filepath = App.Path & GFX_PATH & "resources\" & i & GFX_EXT
+        Tex_Resource(NumResources).FilePath = App.Path & GFX_PATH & "resources\" & i & GFX_EXT
         Tex_Resource(NumResources).Texture = NumTextures
         NumResources = NumResources + 1
         i = i + 1
@@ -550,7 +565,7 @@ Dim i As Long
         ReDim Preserve Tex_SpellIcon(NumSpellIcons)
         NumTextures = NumTextures + 1
         ReDim Preserve gTexture(NumTextures)
-        Tex_SpellIcon(NumSpellIcons).filepath = App.Path & GFX_PATH & "spellicons\" & i & GFX_EXT
+        Tex_SpellIcon(NumSpellIcons).FilePath = App.Path & GFX_PATH & "spellicons\" & i & GFX_EXT
         Tex_SpellIcon(NumSpellIcons).Texture = NumTextures
         NumSpellIcons = NumSpellIcons + 1
         i = i + 1
@@ -587,7 +602,7 @@ Dim i As Long
         ReDim Preserve Tex_Face(NumFaces)
         NumTextures = NumTextures + 1
         ReDim Preserve gTexture(NumTextures)
-        Tex_Face(NumFaces).filepath = App.Path & GFX_PATH & "faces\" & i & GFX_EXT
+        Tex_Face(NumFaces).FilePath = App.Path & GFX_PATH & "faces\" & i & GFX_EXT
         Tex_Face(NumFaces).Texture = NumTextures
         NumFaces = NumFaces + 1
         i = i + 1
@@ -623,7 +638,7 @@ Dim i As Long
         ReDim Preserve Tex_Fog(NumFogs)
         NumTextures = NumTextures + 1
         ReDim Preserve gTexture(NumTextures)
-        Tex_Fog(NumFogs).filepath = App.Path & GFX_PATH & "fogs\" & i & GFX_EXT
+        Tex_Fog(NumFogs).FilePath = App.Path & GFX_PATH & "fogs\" & i & GFX_EXT
         Tex_Fog(NumFogs).Texture = NumTextures
         NumFogs = NumFogs + 1
         i = i + 1
@@ -1342,7 +1357,7 @@ Function GetPlayerX(ByVal Index As Long) As Long
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If Index > MAX_PLAYERS Then Exit Function
-    GetPlayerX = Player(Index).x
+    GetPlayerX = Player(Index).X
     
     ' Error handler
     Exit Function
@@ -1352,12 +1367,12 @@ errorhandler:
     Exit Function
 End Function
 
-Sub SetPlayerX(ByVal Index As Long, ByVal x As Long)
+Sub SetPlayerX(ByVal Index As Long, ByVal X As Long)
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If Index > MAX_PLAYERS Then Exit Sub
-    Player(Index).x = x
+    Player(Index).X = X
     
     ' Error handler
     Exit Sub
@@ -1372,7 +1387,7 @@ Function GetPlayerY(ByVal Index As Long) As Long
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If Index > MAX_PLAYERS Then Exit Function
-    GetPlayerY = Player(Index).y
+    GetPlayerY = Player(Index).Y
     
     ' Error handler
     Exit Function
@@ -1382,12 +1397,12 @@ errorhandler:
     Exit Function
 End Function
 
-Sub SetPlayerY(ByVal Index As Long, ByVal y As Long)
+Sub SetPlayerY(ByVal Index As Long, ByVal Y As Long)
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If Index > MAX_PLAYERS Then Exit Sub
-    Player(Index).y = y
+    Player(Index).Y = Y
     
     ' Error handler
     Exit Sub
