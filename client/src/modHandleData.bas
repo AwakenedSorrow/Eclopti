@@ -3100,6 +3100,8 @@ Dim buffer As clsBuffer, targetType As Long, target As Long, message As String, 
     
     AddChatBubble target, targetType, message, colour
     Set buffer = Nothing
+    
+    Exit Sub
 errorhandler:
     HandleError "HandleChatBubble", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
@@ -3140,6 +3142,8 @@ Dim buffer As clsBuffer, effectType As Long
             CurrentTintA = buffer.ReadLong
     End Select
     Set buffer = Nothing
+    
+    Exit Sub
 errorhandler:
     HandleError "HandleSpecialEffect", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
