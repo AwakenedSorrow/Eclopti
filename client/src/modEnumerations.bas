@@ -196,7 +196,7 @@ Public Enum ClientPackets
     CMSG_COUNT
 End Enum
 
-Public HandleDataSub(CMSG_COUNT) As Long
+Public HandleDataSub(SMSG_COUNT) As Long
 
 ' Stats used by Players, Npcs and Classes
 Public Enum Stats
