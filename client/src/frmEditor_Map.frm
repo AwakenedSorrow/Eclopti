@@ -1925,6 +1925,8 @@ Private Sub scrlTileSet_Change()
     EditorTileWidth = 1
     EditorTileHeight = 1
     
+    LoadTilesets
+    
     ' Error handler
     Exit Sub
 errorhandler:

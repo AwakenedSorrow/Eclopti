@@ -183,8 +183,8 @@ End Sub
 Public Sub SaveMap(ByVal MapNum As Long)
 Dim filename As String
 Dim f As Long
-Dim X As Long
-Dim Y As Long, i As Long, Z As Long, w As Long
+Dim x As Long
+Dim y As Long, i As Long, Z As Long, w As Long
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -221,17 +221,17 @@ Dim Y As Long, i As Long, Z As Long, w As Long
     Put #f, , Map.MaxX
     Put #f, , Map.MaxY
 
-    For X = 0 To Map.MaxX
-        For Y = 0 To Map.MaxY
-            Put #f, , Map.Tile(X, Y)
+    For x = 0 To Map.MaxX
+        For y = 0 To Map.MaxY
+            Put #f, , Map.Tile(x, y)
         Next
 
         DoEvents
     Next
 
-    For X = 1 To MAX_MAP_NPCS
-        Put #f, , Map.Npc(X)
-        Put #f, , Map.NpcSpawnType(X)
+    For x = 1 To MAX_MAP_NPCS
+        Put #f, , Map.Npc(x)
+        Put #f, , Map.NpcSpawnType(x)
     Next
     
 
@@ -250,8 +250,8 @@ End Sub
 Public Sub LoadMap(ByVal MapNum As Long)
 Dim filename As String
 Dim f As Long
-Dim X As Long
-Dim Y As Long, i As Long, Z As Long, w As Long, p As Long
+Dim x As Long
+Dim y As Long, i As Long, Z As Long, w As Long, p As Long
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -290,15 +290,15 @@ Dim Y As Long, i As Long, Z As Long, w As Long, p As Long
     ' have to set the tile()
     ReDim Map.Tile(0 To Map.MaxX, 0 To Map.MaxY)
 
-    For X = 0 To Map.MaxX
-        For Y = 0 To Map.MaxY
-            Get #f, , Map.Tile(X, Y)
+    For x = 0 To Map.MaxX
+        For y = 0 To Map.MaxY
+            Get #f, , Map.Tile(x, y)
         Next
     Next
 
-    For X = 1 To MAX_MAP_NPCS
-        Get #f, , Map.Npc(X)
-        Get #f, , Map.NpcSpawnType(X)
+    For x = 1 To MAX_MAP_NPCS
+        Get #f, , Map.Npc(x)
+        Get #f, , Map.NpcSpawnType(x)
     Next
 
     Close #f
@@ -341,25 +341,6 @@ Dim i As Long
     Exit Sub
 errorhandler:
     HandleError "CheckTilesets", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-End Sub
-
-
-Public Sub LoadAllTilesets()
-Dim i As Long
-
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    For i = 1 To NumTileSets
-        LoadTexture Tex_Tileset(i)
-    Next
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "LoadAllTilesets", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
 End Sub
@@ -1357,7 +1338,7 @@ Function GetPlayerX(ByVal Index As Long) As Long
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If Index > MAX_PLAYERS Then Exit Function
-    GetPlayerX = Player(Index).X
+    GetPlayerX = Player(Index).x
     
     ' Error handler
     Exit Function
@@ -1367,12 +1348,12 @@ errorhandler:
     Exit Function
 End Function
 
-Sub SetPlayerX(ByVal Index As Long, ByVal X As Long)
+Sub SetPlayerX(ByVal Index As Long, ByVal x As Long)
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If Index > MAX_PLAYERS Then Exit Sub
-    Player(Index).X = X
+    Player(Index).x = x
     
     ' Error handler
     Exit Sub
@@ -1387,7 +1368,7 @@ Function GetPlayerY(ByVal Index As Long) As Long
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If Index > MAX_PLAYERS Then Exit Function
-    GetPlayerY = Player(Index).Y
+    GetPlayerY = Player(Index).y
     
     ' Error handler
     Exit Function
@@ -1397,12 +1378,12 @@ errorhandler:
     Exit Function
 End Function
 
-Sub SetPlayerY(ByVal Index As Long, ByVal Y As Long)
+Sub SetPlayerY(ByVal Index As Long, ByVal y As Long)
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If Index > MAX_PLAYERS Then Exit Sub
-    Player(Index).Y = Y
+    Player(Index).y = y
     
     ' Error handler
     Exit Sub
