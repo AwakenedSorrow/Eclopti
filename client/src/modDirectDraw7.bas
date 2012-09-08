@@ -3349,6 +3349,9 @@ Sub HandleDeviceLost()
     
    LoadTextures
    
+   ' Load tilesets again, or we'll get a very blank screen.
+   LoadTilesets
+   
 End Sub
 
 Private Function DirectX_ReInit() As Boolean
